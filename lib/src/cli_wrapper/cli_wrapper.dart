@@ -10,7 +10,7 @@ class CliWrapper {
     await verifyBinaryExists();
 
     final result = await Process.run(executablePath, args);
-    if (result.exitCode != 0) throw ExecutionFailed("Error executing '$executablePath' with args $args", exitCode:result.exitCode, stdOut:result.stdout, stdErr:result.stderr);
+    if (result.exitCode != 0) throw ExecutionFailed("Error executing '$executablePath ${args.join(" ")}': ", exitCode:result.exitCode, stdOut:result.stdout, stdErr:result.stderr);
     return result.stdout;
   }
 
