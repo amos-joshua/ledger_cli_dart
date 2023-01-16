@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'transaction.dart';
 
@@ -18,13 +19,30 @@ class TransactionListCodec extends Codec<Transaction, List<dynamic>> {
 
   
 }
+
+class ChunkedConversionAdaptorSink<T, S> extends ChunkedConversionSink<T> {
+  final Converter<T, S> _converter;
+  final Sink<S> _outSink;
+  ChunkedConversionAdaptorSink(this._outSink, this._converter);
+
+  @override
+  void add(T chunk) => _outSink.add(_converter.convert(chunk));
+
+
+  @override
+  void close() => _outSink.close();
+}
+
 /// Converts a Transaction to a List<dynamic>, as suitable for feeding to the dart csv package
 class TransactionToListConverter extends Converter<Transaction, List<dynamic>> {
   @override
-  List convert(Transaction input) {
+  List<dynamic> convert(Transaction input) {
     return ["${input.date.year}/${input.date.month}/${input.date.day}", input.description, input.account, input.currency, input.amount, input.status.toString(), input.notes];
   }
-  
+
+
+  @override
+  Sink<Transaction> startChunkedConversion(Sink<List<dynamic>> sink) => ChunkedConversionAdaptorSink<Transaction, List<dynamic>>(sink, this);
 }
 
 /// Converts a List<dynamic> to a Transaction, as suitable for feeding to the dart csv package
@@ -40,9 +58,18 @@ class ListToTransactionConverter extends Converter<List<dynamic>, Transaction> {
     final description = input[2];
     final account = input[3];
     final currency = input[4];
-    final amountNumber = input[5];
+    var amountNumber = input[5];
     final statusStr = input[6];
     final notes = input[7];
+
+    if (amountNumber is String) {
+      try {
+        amountNumber = double.parse(amountNumber);
+      }
+      catch(exc) {
+        throw Exception("Invalid amount '$amountNumber': expected a parsable double but parsing failed on '$amountNumber': $exc");
+      }
+    }
 
     final amountIsInt = amountNumber is int;
     final amountIsDouble = amountNumber is double;
@@ -81,5 +108,8 @@ class ListToTransactionConverter extends Converter<List<dynamic>, Transaction> {
       notes: notes
     );
   }
+
+  @override
+  Sink<List<dynamic>> startChunkedConversion(Sink<Transaction> sink) => ChunkedConversionAdaptorSink<List<dynamic>, Transaction>(sink, this);
 }
 
