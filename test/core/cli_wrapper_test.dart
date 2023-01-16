@@ -3,7 +3,6 @@ import 'package:test/test.dart';
 
 void main() {
   group('cli wrapper', () {
-
     test('executing non-existent binary', () async {
       final cli = CliWrapper(executablePath: '/usr/not-bin/non-existent-binary-1234');
       expect(cli.verifyBinaryExists(), throwsA(isA<ExecutableDoesNotExistException>()));
