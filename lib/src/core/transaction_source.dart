@@ -1,8 +1,8 @@
 
-import 'transaction.dart';
+import 'entry.dart';
 import 'query.dart';
 
-abstract class TransactionSource {
-  Future<Stream<Transaction>> query(Query query);
+abstract class EntrySource {
+  Future<Stream<Entry>> query(Query query);
 }
 

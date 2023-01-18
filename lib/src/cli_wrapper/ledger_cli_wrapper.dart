@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'package:csv/csv.dart';
 
 import "../core/core.dart";
 import 'cli_wrapper.dart';
 
+/*
 class LedgerCliWrapper implements TransactionSource {
   static const queryArgumentFormatter = QueryArgumentFormatter();
   final CliWrapper ledgerBinary;
@@ -19,4 +19,4 @@ class LedgerCliWrapper implements TransactionSource {
     final csvData = await ledgerBinary.execute(args);
     return Stream.value(csvData).transform(CsvToListConverter(eol: "\n", shouldParseNumbers: true, allowInvalid: false)).transform(ListToTransactionConverter());
   }
-}
+}*/
