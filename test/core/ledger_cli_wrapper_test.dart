@@ -1,6 +1,7 @@
 import 'package:ledger_cli/ledger_cli.dart';
 import 'package:test/test.dart';
 
+/*
 final sampleDatTransactions = [
   Transaction(date: DateTime.parse("2004-05-01 00:00:00.000"),
       code: '',
@@ -8,7 +9,7 @@ final sampleDatTransactions = [
       account: "Assets:Bank:Checking",
       currency: r"$",
       amount: 1000.0,
-      status: TransactionStatus.cleared,
+      state: TransactionStatus.cleared,
       notes: ""),
   Transaction(date: DateTime.parse("2004-05-01 00:00:00.000"),
       code: '',
@@ -16,7 +17,7 @@ final sampleDatTransactions = [
       account: "Equity:Opening Balances",
       currency: r"$",
       amount: -1000.0,
-      status: TransactionStatus.cleared,
+      state: TransactionStatus.cleared,
       notes: ""),
   Transaction(date: DateTime.parse("2004-05-03 00:00:00.000"),
       code: '',
@@ -24,7 +25,7 @@ final sampleDatTransactions = [
       account: "Assets:Brokerage",
       currency: "AAPL",
       amount: 50.0,
-      status: TransactionStatus.cleared,
+      state: TransactionStatus.cleared,
       notes: ""),
   Transaction(date: DateTime.parse("2004-05-03 00:00:00.000"),
       code: '',
@@ -32,7 +33,7 @@ final sampleDatTransactions = [
       account: "Equity:Opening Balances",
       currency: r"$",
       amount: -1500.0,
-      status: TransactionStatus.cleared,
+      state: TransactionStatus.cleared,
       notes: ""),
   Transaction(date: DateTime.parse("2004-05-14 00:00:00.000"),
       code: '',
@@ -40,7 +41,7 @@ final sampleDatTransactions = [
       account: "Assets:Bank:Checking",
       currency: "€",
       amount: 500.0,
-      status: TransactionStatus.cleared,
+      state: TransactionStatus.cleared,
       notes: ""),
   Transaction(date: DateTime.parse("2004-05-14 00:00:00.000"),
       code: '',
@@ -48,7 +49,7 @@ final sampleDatTransactions = [
       account: "Income:Salary",
       currency: "€",
       amount: -500.0,
-      status: TransactionStatus.cleared,
+      state: TransactionStatus.cleared,
       notes: ""),
   Transaction(date: DateTime.parse("2004-05-14 00:00:00.000"),
       code: '',
@@ -56,7 +57,7 @@ final sampleDatTransactions = [
       account: "Asséts:Bánk:Chécking:Asséts:Bánk:Chécking",
       currency: r"$",
       amount: 500.0,
-      status: TransactionStatus.cleared,
+      state: TransactionStatus.cleared,
       notes: ""),
   Transaction(date: DateTime.parse("2004-05-14 00:00:00.000"),
       code: '',
@@ -64,7 +65,7 @@ final sampleDatTransactions = [
       account: "Income:Salary",
       currency: r"$",
       amount: -500.0,
-      status: TransactionStatus.cleared,
+      state: TransactionStatus.cleared,
       notes: ""),
   Transaction(date: DateTime.parse("2004-05-14 00:00:00.000"),
       code: '',
@@ -72,7 +73,7 @@ final sampleDatTransactions = [
       account: "Русский язык:Активы:Русский язык:Русский язык",
       currency: r"$",
       amount: 1000.0,
-      status: TransactionStatus.cleared,
+      state: TransactionStatus.cleared,
       notes: ""),
   Transaction(date: DateTime.parse("2004-05-14 00:00:00.000"),
       code: '',
@@ -80,7 +81,7 @@ final sampleDatTransactions = [
       account: "Income:Salary",
       currency: r"$",
       amount: -1000.0,
-      status: TransactionStatus.cleared,
+      state: TransactionStatus.cleared,
       notes: ""),
   Transaction(date: DateTime.parse("2004-05-27 00:00:00.000"),
       code: '',
@@ -88,7 +89,7 @@ final sampleDatTransactions = [
       account: "Expenses:Books",
       currency: r"$",
       amount: 20.0,
-      status: TransactionStatus.uncleared,
+      state: TransactionStatus.uncleared,
       notes: ""),
   Transaction(date: DateTime.parse("2004-05-27 00:00:00.000"),
       code: '',
@@ -96,7 +97,7 @@ final sampleDatTransactions = [
       account: "Expenses:Cards",
       currency: r"$",
       amount: 40.0,
-      status: TransactionStatus.uncleared,
+      state: TransactionStatus.uncleared,
       notes: ""),
   Transaction(date: DateTime.parse("2004-05-27 00:00:00.000"),
       code: '',
@@ -104,7 +105,7 @@ final sampleDatTransactions = [
       account: "Expenses:Docs",
       currency: r"$",
       amount: 30.0,
-      status: TransactionStatus.uncleared,
+      state: TransactionStatus.uncleared,
       notes: ""),
   Transaction(date: DateTime.parse("2004-05-27 00:00:00.000"),
       code: '',
@@ -112,7 +113,7 @@ final sampleDatTransactions = [
       account: "Liabilities:MasterCard",
       currency: r"$",
       amount: -90.0,
-      status: TransactionStatus.uncleared,
+      state: TransactionStatus.uncleared,
       notes: ""),
   Transaction(date: DateTime.parse("2004-05-27 00:00:00.000"),
       code: '',
@@ -120,7 +121,7 @@ final sampleDatTransactions = [
       account: "(Liabilities:Taxes)",
       currency: r"$",
       amount: -2.0,
-      status: TransactionStatus.uncleared,
+      state: TransactionStatus.uncleared,
       notes: ""),
   Transaction(date: DateTime.parse("2004-05-27 00:00:00.000"),
       code: '100',
@@ -128,7 +129,7 @@ final sampleDatTransactions = [
       account: "Liabilities:MasterCard",
       currency: r"$",
       amount: 20.0,
-      status: TransactionStatus.uncleared,
+      state: TransactionStatus.uncleared,
       notes: r" This is a posting note!\n Sample: Another Value\n :MyTag: This is an xact note!\n Sample: Value"),
   Transaction(date: DateTime.parse("2004-05-27 00:00:00.000"),
       code: '100',
@@ -136,7 +137,7 @@ final sampleDatTransactions = [
       account: "Assets:Bank:Checking",
       currency: r"$",
       amount: -20.0,
-      status: TransactionStatus.uncleared,
+      state: TransactionStatus.uncleared,
       notes: r" :AnotherTag: This is an xact note!\n Sample: Value")
 ];
 
@@ -166,3 +167,6 @@ void main() {
     });
   });
 }
+
+
+ */

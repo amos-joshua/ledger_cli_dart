@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'transaction.dart';
 
+import 'entry.dart';
+import 'posting.dart';
+import 'formatters.dart';
 
 /*
 Ledger CSV format (https://devhints.io/ledger-csv):
@@ -9,16 +11,6 @@ date         , code  , desc     , account            , currency , amt     , pend
 "2013/09/02" , ""    , "things" , "Assets:Cash"      , "P"      , "-2000" , "*"             , ""
  */
 
-/// A codec for converting Transactions to/from List<dynamic>s as suitable for the csv dart package
-class TransactionListCodec extends Codec<Transaction, List<dynamic>> {
-  @override
-  Converter<List, Transaction> get decoder => ListToTransactionConverter();
-
-  @override
-  Converter<Transaction, List> get encoder => TransactionToListConverter();
-
-  
-}
 
 class ChunkedConversionAdaptorSink<T, S> extends ChunkedConversionSink<T> {
   final Converter<T, S> _converter;
@@ -33,20 +25,29 @@ class ChunkedConversionAdaptorSink<T, S> extends ChunkedConversionSink<T> {
   void close() => _outSink.close();
 }
 
-/// Converts a Transaction to a List<dynamic>, as suitable for feeding to the dart csv package
-class TransactionToListConverter extends Converter<Transaction, List<dynamic>> {
+/// Converts a Transaction to a String
+class TransactionToStringConverter extends Converter<Entry, String> {
+  static const dateFormatter = LedgerDateFormatter();
+  static const stateFormatter = EntryStateFormatter();
+  static const notesFormatter = EntryNoteFormatter();
+
   @override
-  List<dynamic> convert(Transaction input) {
-    return ["${input.date.year}/${input.date.month}/${input.date.day}", input.description, input.account, input.currency, input.amount, input.status.toString(), input.notes];
-  }
+  String convert(Entry input) => """${dateFormatter.format(input.date)} ${stateFormatter.format(input.state)}${input.payee}${notesFormatter.format(input.notes)}
+${input.postings.map((posting) => _formatPosting(posting)).join("\n")}
+
+""";
+
+  String _formatPosting(Posting posting) => """    ${posting.account.padRight(50)}${posting.currency}${posting.amount}${notesFormatter.format(posting.notes)}
+""";
 
 
   @override
-  Sink<Transaction> startChunkedConversion(Sink<List<dynamic>> sink) => ChunkedConversionAdaptorSink<Transaction, List<dynamic>>(sink, this);
+  Sink<Entry> startChunkedConversion(Sink<String> sink) => ChunkedConversionAdaptorSink<Entry, String>(sink, this);
 }
 
-/// Converts a List<dynamic> to a Transaction, as suitable for feeding to the dart csv package
-class ListToTransactionConverter extends Converter<List<dynamic>, Transaction> {
+/*
+/// Converts a String to an Entry
+class StringToEntryConverter extends Converter<String, Entry> {
   @override
   Transaction convert(List<dynamic> input) {
     if (input.length != 8) {
@@ -104,7 +105,7 @@ class ListToTransactionConverter extends Converter<List<dynamic>, Transaction> {
       account: account,
       currency: currency,
       amount: amount,
-      status: status,
+      state: status,
       notes: notes
     );
   }
@@ -112,4 +113,4 @@ class ListToTransactionConverter extends Converter<List<dynamic>, Transaction> {
   @override
   Sink<List<dynamic>> startChunkedConversion(Sink<Transaction> sink) => ChunkedConversionAdaptorSink<List<dynamic>, Transaction>(sink, this);
 }
-
+*/

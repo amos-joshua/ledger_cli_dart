@@ -9,7 +9,7 @@ environment:
 
 dependencies:
 #  path: ^1.8.0
-  csv: ^5.0.1
+  petitparser: ^5.1.0
 
 dev_dependencies:
   lints: ^2.0.0

@@ -1,6 +1,8 @@
 library core;
 
 export "query.dart";
-export "transaction.dart";
+export "entry.dart";
+export "posting.dart";
 export "transaction_source.dart";
-export "transaction_list_codec.dart";
+export "entry_string_codec.dart";
+export 'parsers.dart';
