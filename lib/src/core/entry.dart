@@ -14,12 +14,12 @@ class Entry {
   String code;
   String payee;
   EntryState state;
-  String notes;
+  String note;
   final List<Posting> postings;
-  Entry({required this.date, required this.code, required this.payee, required this.state, required this.postings, this.notes=""});
+  Entry({required this.date, required this.code, required this.payee, required this.state, required this.postings, this.note=""});
 
   @override
-  String toString() => "Entry(date: $date, code: $code, payee: $payee, state: $state, notes: $notes, postings: $postings)";
+  String toString() => "Entry(date: $date, code: $code, payee: $payee, state: $state, notes: $note, postings: $postings)";
 
   @override
   bool operator ==(Object other) => (other is Entry) &&
@@ -27,7 +27,7 @@ class Entry {
       (code == other.code) &&
       (payee == other.payee) &&
       (state == other.state) &&
-      (notes == other.notes) &&
+      (note == other.note) &&
       comparePostings(other);
 
   bool comparePostings(Entry other) {
@@ -39,5 +39,5 @@ class Entry {
   }
 
   @override
-  int get hashCode => Object.hash(date, code, payee, state, notes);
+  int get hashCode => Object.hash(date, code, payee, state, note);
 }

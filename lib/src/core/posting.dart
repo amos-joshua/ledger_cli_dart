@@ -1,22 +1,21 @@
-import 'account.dart';
 
 class Posting {
-  Account account;
+  String account;
   String currency;
   double amount;
-  String notes;
-  Posting({required this.account, required this.currency, required this.amount, this.notes=""});
+  String note;
+  Posting({required this.account, required this.currency, required this.amount, this.note=""});
 
   @override
-  String toString() => "Posting(account: $account, currency: $currency, amount: $amount, notes: $notes)";
+  String toString() => "Posting(account: $account, currency: $currency, amount: $amount, notes: $note)";
 
   @override
   bool operator ==(Object other) => (other is Posting) &&
       (account == other.account) &&
       (currency == other.currency) &&
       (amount == other.amount) &&
-      (notes == other.notes);
+      (note == other.note);
 
   @override
-  int get hashCode => Object.hash(account, currency, amount, notes);
+  int get hashCode => Object.hash(account, currency, amount, note);
 }

@@ -4,16 +4,17 @@ import 'ledger_line_parser.dart';
 import 'ledger_line.dart';
 
 
-class LedgerStringLineTransformer implements StreamTransformer<String, LedgerLine> {
+class LedgerStringToLineTransformer implements StreamTransformer<String, LedgerLine> {
   static final ledgerLineDefinition = LedgerLineDefinition();
-  static late final Parser ledgerLineParser;
+  late final Parser ledgerLineParser;
 
   late final StreamController<LedgerLine> _controller;
   StreamSubscription? _subscription;
   final bool cancelOnError;
   late final Stream<String> _incomingStream;
+  var lineNumber = 0;
 
-  LedgerStringLineTransformer({bool sync = false, this.cancelOnError = true}) {
+  LedgerStringToLineTransformer({bool sync = false, this.cancelOnError = true}) {
     _controller = StreamController<LedgerLine>(onListen: _onListen, onCancel: _onCancel, onPause: () {
       _subscription?.pause();
     }, onResume: () {
@@ -22,7 +23,7 @@ class LedgerStringLineTransformer implements StreamTransformer<String, LedgerLin
     ledgerLineParser = ledgerLineDefinition.build();
   }
 
-  LedgerStringLineTransformer.broadcast({bool sync = false, this.cancelOnError = true}) {
+  LedgerStringToLineTransformer.broadcast({bool sync = false, this.cancelOnError = true}) {
     _controller = StreamController<LedgerLine>.broadcast(onListen: _onListen, onCancel: _onCancel, sync: sync);
   }
 
@@ -39,17 +40,22 @@ class LedgerStringLineTransformer implements StreamTransformer<String, LedgerLin
   }
 
   void onData(String data) {
-    final ledgerLine = ledgerLineParser.parse(data);
+    lineNumber += 1;
+    final ledgerLineParser2 = ledgerLineDefinition.build();
+
+    final ledgerLine = ledgerLineParser2.parse(data);
     if (ledgerLine.isSuccess) {
+      if (ledgerLine.value is EmptyLine) return;
       _controller.add(ledgerLine.value);
     }
     else {
-      throw Exception("Error parsing line [$data]: ${ledgerLine.message}");
+      throw Exception("Error parsing line #$lineNumber [$data]: ${ledgerLine.message} (at position:${ledgerLine.position})");
     }
   }
 
   @override
   Stream<LedgerLine> bind(Stream<String> stream) {
+    lineNumber = 0;
     _incomingStream = stream;
     return _controller.stream;
   }
