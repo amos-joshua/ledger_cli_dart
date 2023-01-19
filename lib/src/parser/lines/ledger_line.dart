@@ -61,10 +61,10 @@ class AccountLine extends LedgerLine {
 
 
 class PostingLine extends LedgerLine {
-  final String account;
-  final String currency;
-  final double amount;
-  final String note;
+  String account;
+  String currency;
+  double? amount;
+  String note;
   PostingLine({required this.account, required this.currency, required this.amount, required this.note});
 
 

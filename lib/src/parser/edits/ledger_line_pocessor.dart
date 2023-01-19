@@ -11,7 +11,8 @@ class LedgerLineProcessor {
   }
 
   Entry? _currentEntry;
-  Posting? _currentPosting;
+  final List<PostingLine> _currentPostingLines = [];
+  PostingLine? _currentPostingLine;
   var lineNumber = 0;
 
   Stream<LedgerEdit> process({required Stream<LedgerLine> lineStream}) async* {
@@ -19,11 +20,29 @@ class LedgerLineProcessor {
     await for (final line in lineStream) {
       yield* processLine(line);
     }
+    final lastEdit = finalize();
+    if (lastEdit != null) {
+      yield lastEdit;
+    }
   }
 
   void initialize() {
     _currentEntry = null;
-    _currentPosting = null;
+    _currentPostingLine = null;
+  }
+
+  LedgerEdit? finalize() {
+    final currentEntry = _currentEntry;
+    final currentPostingLine = _currentPostingLine;
+    if (currentEntry != null) {
+      if (currentPostingLine != null) {
+        _currentPostingLines.add(currentPostingLine);
+        _currentPostingLine = null;
+      }
+      final editAddEntry = editEntryForCurrentEntry(currentEntry);
+      return editAddEntry;
+    }
+    return null;
   }
   
   Stream<LedgerEdit> processLine(LedgerLine line) async* {
@@ -36,7 +55,7 @@ class LedgerLineProcessor {
         throw Exception("Unexpected posting line at $lineNumber, not associated to an Entry");
       } else if (line is EntryLine) {
         _currentEntry = Entry(date: line.date, code: line.code, payee: line.payee, state: line.state, postings: [], note: line.note);
-        _currentPosting = null;
+        _currentPostingLine = null;
       }
       else if (line is AccountLine) {
         if (!knownAccounts.contains(line.name)) {
@@ -46,8 +65,8 @@ class LedgerLineProcessor {
       }
     }
     else {
-      final currentPosting = _currentPosting;
-      if (currentPosting == null) {
+      final currentPostingLine = _currentPostingLine;
+      if (currentPostingLine == null) {
         if (line is NoteLine) {
           currentEntry.note += ' ${line.note}';
         }
@@ -62,38 +81,53 @@ class LedgerLineProcessor {
             knownAccounts.add(line.account);
             yield LedgerEditAddAccount(line.account);
           }
-          _currentPosting = Posting(account: line.account, currency: line.currency, amount: line.amount, note: line.note);
+          _currentPostingLine = line;
         }
       }
       else {
         if (line is NoteLine) {
-          currentPosting.note += ' ${line.note}';
+          currentPostingLine.note += ' ${line.note}';
         }
         else if (line is PostingLine) {
           if (!knownAccounts.contains(line.account)) {
             knownAccounts.add(line.account);
             yield LedgerEditAddAccount(line.account);
           }
-          currentEntry.postings.add(currentPosting);
-          _currentPosting = Posting(account: line.account, currency: line.currency, amount: line.amount, note: line.note);
+          _currentPostingLines.add(currentPostingLine);
+          _currentPostingLine = line;
         }
         else if (line is EntryLine) {
-          currentEntry.postings.add(currentPosting);
-          yield LedgerEditAddEntry(currentEntry);
+          _currentPostingLines.add(currentPostingLine);
+          yield editEntryForCurrentEntry(currentEntry);
           _currentEntry = Entry(date: line.date, code: line.code, payee: line.payee, state: line.state, postings: [], note: line.note);
-          _currentPosting = null;
         }
         else if (line is AccountLine) {
           if (!knownAccounts.contains(line.name)) {
             knownAccounts.add(line.name);
             yield LedgerEditAddAccount(line.name);
           }
-          currentEntry.postings.add(currentPosting);
-          yield LedgerEditAddEntry(currentEntry);
-          _currentEntry = null;
-          _currentPosting = null;
+          yield editEntryForCurrentEntry(currentEntry);
         }
       }
     }
+  }
+
+  LedgerEditAddEntry editEntryForCurrentEntry(Entry currentEntry) {
+    final postingLinesWithNoAmount = _currentPostingLines.where((postingLine) => postingLine.amount == null);
+    final postingWithAmount = _currentPostingLines.where((postingLine) => postingLine.amount != null);
+    if (postingLinesWithNoAmount.length > 1) {
+      throw Exception("Error at line $lineNumber: cannot add entry defined in previous lines, it contains more than one posting without an amount");
+    }
+    else if (postingLinesWithNoAmount.length == 1) {
+      if (postingWithAmount.isEmpty) throw Exception("Error at line $lineNumber: cannot add entry defined in previous lines, it contains a single posting with no amount defined");
+      postingLinesWithNoAmount.first.currency = postingWithAmount.first.currency;
+      postingLinesWithNoAmount.first.amount = _currentPostingLines.fold<double>(0.0, (previousValue, postingLine) => previousValue - (postingLine.amount ?? 0));
+    }
+    final postings = _currentPostingLines.map((postingLine) => Posting(account: postingLine.account, currency: postingLine.currency, amount: postingLine.amount ?? 0, note: postingLine.note));
+    currentEntry.postings.addAll(postings);
+    _currentEntry = null;
+    _currentPostingLine = null;
+    _currentPostingLines.clear();
+    return LedgerEditAddEntry(currentEntry);
   }
 }
