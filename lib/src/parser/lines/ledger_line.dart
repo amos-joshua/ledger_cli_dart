@@ -1,4 +1,4 @@
-import '../core/core.dart';
+import '../../core/core.dart';
 
 abstract class LedgerLine {
 }
@@ -27,6 +27,10 @@ class EntryLine extends LedgerLine {
   int get hashCode => Object.hash(date, code, payee, state, note);
 }
 
+class EmptyLine extends LedgerLine {
+  static final empty = EmptyLine();
+}
+
 class NoteLine extends LedgerLine {
   final String note;
   NoteLine(this.note);
@@ -40,6 +44,21 @@ class NoteLine extends LedgerLine {
   @override
   int get hashCode => note.hashCode;
 }
+
+class AccountLine extends LedgerLine {
+  final String name;
+  AccountLine(this.name);
+
+  @override
+  String toString() => "AccountLine(name: $name)";
+
+  @override
+  bool operator ==(Object other) => (other is AccountLine) && (name == other.name);
+
+  @override
+  int get hashCode => name.hashCode;
+}
+
 
 class PostingLine extends LedgerLine {
   final String account;

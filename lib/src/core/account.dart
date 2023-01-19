@@ -26,4 +26,8 @@ class AccountManager {
     accounts[name] = newAccount;
     return newAccount;
   }
+
+  void clear() {
+    accounts.clear();
+  }
 }
