@@ -19,7 +19,7 @@ class Entry {
   Entry({required this.date, required this.code, required this.payee, required this.state, required this.postings, this.note=""});
 
   @override
-  String toString() => "Entry(date: $date, code: $code, payee: $payee, state: $state, notes: $note, postings: $postings)";
+  String toString() => "Entry(date: $date, code: $code, payee: $payee, state: $state, note: $note, postings: $postings)";
 
   @override
   bool operator ==(Object other) => (other is Entry) &&

@@ -7,7 +7,7 @@ class Posting {
   Posting({required this.account, required this.currency, required this.amount, this.note=""});
 
   @override
-  String toString() => "Posting(account: $account, currency: $currency, amount: $amount, notes: $note)";
+  String toString() => "Posting(account: $account, currency: $currency, amount: $amount, note: $note)";
 
   @override
   bool operator ==(Object other) => (other is Posting) &&

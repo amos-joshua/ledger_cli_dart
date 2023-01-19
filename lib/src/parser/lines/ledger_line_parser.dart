@@ -26,7 +26,7 @@ class LedgerLineDefinition extends GrammarDefinition {
   Parser currency() => char(' ').neg().plus().flatten().trim();
   Parser amount() => (char('-').optional() & char('0').or(digit().plus()) & char('.').seq(digit().plus()).optional()).flatten().map(double.parse);
   Parser account() => '    '.toParser().neg().plus().flatten().trim();
-  Parser<PostingLine> postingLine() => seq5('    '.toParser(message: 'Posting should start with four spaces'), account(), currency(), amount(), ref0(note).optional()).map5((_, account, currency, amount, note) => PostingLine(account: account, currency: currency, amount: amount, note: note ?? ''));
+  Parser<PostingLine> postingLine() => seq5('    '.toParser(message: 'Posting should start with four spaces'), account(), currency().optional(), amount().optional(), ref0(note).optional()).map5((_, account, currency, amount, note) => PostingLine(account: account, currency: currency ?? '', amount: amount, note: note ?? ''));
 }
 
 

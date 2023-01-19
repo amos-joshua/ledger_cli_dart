@@ -26,7 +26,13 @@ class LedgerLineToEditsTransformer implements StreamTransformer<LedgerLine, Ledg
   void _onListen() {
     _subscription = _incomingStream.listen(onData,
         onError: _controller.addError,
-        onDone: _controller.close,
+        onDone: () {
+          final lastEdit = ledgerLineProcessor.finalize();
+          if (lastEdit != null) {
+            _controller.add(lastEdit);
+          }
+          _controller.close();
+        },
         cancelOnError: cancelOnError);
   }
 
