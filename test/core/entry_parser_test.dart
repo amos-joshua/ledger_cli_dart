@@ -1,11 +1,6 @@
-import 'dart:math';
 
 import 'package:ledger_cli/ledger_cli.dart';
 import 'package:test/test.dart';
-
-final posting1 = Posting(account:'Expenses:books', currency: r'$', amount: 500);
-final posting2 = Posting(account:'Liabilities:credit card', currency: r'EUR', amount: -500.3);
-final posting3 = Posting(account:'Liabilities:debit card', currency: r'EUR', amount: -500.0);
 
 
 void main() {
@@ -43,6 +38,18 @@ void main() {
 
     test('with note', () {
       expect(parser.parse(r'    Expenses:books     $ -3.14159 ; this is a note').value,PostingLine(account:'Expenses:books', currency:r'$', amount:-3.14159, note:'this is a note'));
+    });
+  });
+
+  group('string line transformer', () {
+    test('transform strings in stream', () async {
+      final stringStream = Stream<String>.fromIterable([r'    Expenses:books     $ 500', '  ; this is a note']);
+      final ledgerLineStream = stringStream.transform(LedgerStringLineTransformer());
+      final ledgerLines = await ledgerLineStream.toList();
+      expect(ledgerLines, [
+        PostingLine(account:'Expenses:books', currency:r'$', amount:500.0, note:''),
+        NoteLine('this is a note')
+      ]);
     });
   });
 }

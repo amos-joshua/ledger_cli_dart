@@ -1,6 +1,7 @@
+import 'account.dart';
 
 class Posting {
-  String account;
+  Account account;
   String currency;
   double amount;
   String notes;
