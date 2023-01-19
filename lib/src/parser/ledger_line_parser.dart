@@ -1,70 +1,6 @@
-import 'entry.dart';
-import 'posting.dart';
 import 'package:petitparser/petitparser.dart';
-
-
-abstract class LedgerLine {
-}
-
-class EntryLine extends LedgerLine {
-  final DateTime date;
-  final String code;
-  final EntryState state;
-  final String payee;
-  final String note;
-
-  EntryLine({required this.date, required this.code, required this.state, required this.payee, required this.note});
-
-  @override
-  String toString() => "EntryLine(date: $date, code: $code, payee: $payee, state: $state, note: $note)";
-
-  @override
-  bool operator ==(Object other) => (other is EntryLine) &&
-      (date == other.date) &&
-      (code == other.code) &&
-      (payee == other.payee) &&
-      (state == other.state) &&
-      (note == other.note);
-
-  @override
-  int get hashCode => Object.hash(date, code, payee, state, note);
-}
-
-class NoteLine extends LedgerLine {
-  final String note;
-  NoteLine(this.note);
-
-  @override
-  String toString() => "NoteLine(note: $note)";
-
-  @override
-  bool operator ==(Object other) => (other is NoteLine) && (note == other.note);
-
-  @override
-  int get hashCode => note.hashCode;
-}
-
-class PostingLine extends LedgerLine {
-  final String account;
-  final String currency;
-  final double amount;
-  final String note;
-  PostingLine({required this.account, required this.currency, required this.amount, required this.note});
-
-
-  @override
-  String toString() => "PostingLine(account: $account, currency: $currency, amount: $amount, note: $note)";
-
-  @override
-  bool operator ==(Object other) => (other is PostingLine) &&
-      (account == other.account) &&
-      (currency == other.currency) &&
-      (amount == other.amount) &&
-      (note == other.note);
-
-  @override
-  int get hashCode => Object.hash(account, currency, amount, note);
-}
+import '../core/core.dart';
+import 'ledger_line.dart';
 
 class LedgerLineDefinition extends GrammarDefinition {
   @override
@@ -80,7 +16,7 @@ class LedgerLineDefinition extends GrammarDefinition {
   Parser code() => pattern('0-9a-zA-Z#').plus().flatten().trim().skip(before:whitespace().star() & char('('), after:char(')') & whitespace().star()).optional();
   Parser payee() => (char('\n') | char(';')).neg().plus().flatten().map((strVal) => strVal.trim());
   Parser note() => (spaces() & char(';') & spaces() & char('\n').neg().star().flatten()).pick(3);
-  
+
   Parser noteLine() => note().map((val) => NoteLine(val));
 
 
@@ -89,4 +25,5 @@ class LedgerLineDefinition extends GrammarDefinition {
   Parser account() => '    '.toParser().neg().plus().flatten().trim();
   Parser<PostingLine> postingLine() => seq5('    '.toParser(message: 'Posting should start with four spaces'), account(), currency(), amount(), ref0(note).optional()).map5((_, account, currency, amount, note) => PostingLine(account: account, currency: currency, amount: amount, note: note ?? ''));
 }
+
 

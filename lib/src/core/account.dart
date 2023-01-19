@@ -1,17 +1,28 @@
 
-class LedgerAccount {
+import 'package:ledger_cli/ledger_cli.dart';
+
+class Account {
   String name;
 
-  LedgerAccount({required this.name});
+  Account({required this.name});
+
+  @override
+  String toString() => 'Account($name)';
+
+  @override
+  bool operator ==(Object other) => (other is Account) && (name == other.name);
+
+  @override
+  int get hashCode => name.hashCode;
 }
 
-class LedgerAccountRegistry {
-  final accounts = <String, LedgerAccount>{};
+class AccountManager {
+  final accounts = <String, Account>{};
 
-  LedgerAccount accountNamed(String name) {
+  Account accountNamed(String name) {
     final existingAccount = accounts[name];
     if (existingAccount != null) return existingAccount;
-    final newAccount = LedgerAccount(name: name);
+    final newAccount = Account(name: name);
     accounts[name] = newAccount;
     return newAccount;
   }

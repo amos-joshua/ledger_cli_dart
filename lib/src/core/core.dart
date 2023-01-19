@@ -5,4 +5,4 @@ export "entry.dart";
 export "posting.dart";
 export "transaction_source.dart";
 export "entry_string_codec.dart";
-export 'parsers.dart';
+export 'account.dart';
