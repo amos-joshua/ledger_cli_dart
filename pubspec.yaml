@@ -1,5 +1,5 @@
 name: ledger_cli
-description: A starting point for Dart libraries or applications.
+description: Parse ledger-cli ledger files
 version: 0.1.0
 publish_to: 'none'
 homepage: https://www.example.com
@@ -8,7 +8,6 @@ environment:
   sdk: '>=2.18.6 <3.0.0'
 
 dependencies:
-#  path: ^1.8.0
   petitparser: ^5.1.0
 
 dev_dependencies:
