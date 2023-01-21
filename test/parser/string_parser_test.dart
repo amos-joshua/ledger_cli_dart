@@ -7,8 +7,8 @@ account Assets:Checking
 account Assets:Savings
 
 2023/01/02 * ABC
-  Assets:Checking      \$ 50
-  Expenses:Food        -\$ 50
+    Assets:Checking      \$ 50
+    Expenses:Food        \$ -50
 """;
 
 void main() {
@@ -71,6 +71,11 @@ void main() {
       final ledgerLineStream = stringStream.transform(LedgerStringToLineTransformer());
       final ledgerLines = await ledgerLineStream.toList();
       expect(ledgerLines, [
+          AccountLine('Assets:Checking'),
+          AccountLine('Assets:Savings'),
+          EntryLine(date: DateTime(2023, 01, 02), code: '', payee: 'ABC', state: EntryState.cleared, note: ''),
+          PostingLine(account: 'Assets:Checking', currency: r'$', amount: 50.0, note: ''),
+          PostingLine(account: 'Expenses:Food', currency: r'$', amount: -50.0, note: '')
       ]);
     });
   });
