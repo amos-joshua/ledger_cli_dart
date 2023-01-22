@@ -2,7 +2,7 @@ name: ledger_cli
 description: Parse ledger-cli ledger files
 version: 0.1.0
 publish_to: 'none'
-homepage: https://www.example.com
+homepage: https://github.com/amos-joshua/ledger_cli_dart
 
 environment:
   sdk: '>=2.18.6 <3.0.0'
