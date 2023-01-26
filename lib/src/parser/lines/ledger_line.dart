@@ -3,6 +3,22 @@ import '../../core/core.dart';
 abstract class LedgerLine {
 }
 
+
+class IncludeLine extends LedgerLine {
+  final String path;
+  IncludeLine(this.path);
+
+  @override
+  String toString() => "IncludeLine(path: $path)";
+
+  @override
+  bool operator ==(Object other) => (other is IncludeLine) && (path == other.path);
+
+  @override
+  int get hashCode => path.hashCode;
+}
+
+
 class EntryLine extends LedgerLine {
   final DateTime date;
   final String code;

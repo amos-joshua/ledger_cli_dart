@@ -20,6 +20,10 @@ void main() {
       expect(parser.parse('2023/01/06 XYZ').value, EntryLine(date:DateTime(2023, 01, 06), code:'', state:EntryState.uncleared, payee:'XYZ', note:''));
     });
 
+    test('basic parsing with dash date', () {
+      expect(parser.parse('2023-01-06 XYZ').value, EntryLine(date:DateTime(2023, 01, 06), code:'', state:EntryState.uncleared, payee:'XYZ', note:''));
+    });
+
     test('header with code', () {
       expect(parser.parse('2023/02/04 (#100) ABC').value, EntryLine(date:DateTime(2023, 02, 04), code:'#100', state:EntryState.uncleared, payee:'ABC', note:''));
     });
@@ -45,9 +49,24 @@ void main() {
     });
   });
 
+  group('include lines', () {
+    test('include line', () {
+      expect(parser.parse('include accounts').value, IncludeLine('accounts'));
+    });
+
+  });
+
   group('posting line', () {
     test('with amount', () {
       expect(parser.parse(r'    Expenses:books     $ 500').value, PostingLine(account:'Expenses:books', currency:r'$', amount:500.0, note:''));
+    });
+
+    test('with currency after amount', () {
+      expect(parser.parse(r'    Expenses:books     500 EUR').value, PostingLine(account:'Expenses:books', currency:r'EUR', amount:500.0, note:''));
+    });
+
+    test('with negative currency after amount', () {
+      expect(parser.parse(r'    Expenses:books     -500 EUR').value, PostingLine(account:'Expenses:books', currency:r'EUR', amount:-500.0, note:''));
     });
 
     test('with note', () {

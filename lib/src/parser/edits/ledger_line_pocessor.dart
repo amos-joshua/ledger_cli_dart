@@ -48,6 +48,10 @@ class LedgerLineProcessor {
   Stream<LedgerEdit> processLine(LedgerLine line) async* {
     lineNumber += 1;
     final currentEntry = _currentEntry;
+    if (line is IncludeLine) {
+      print("ignoring include line for [${line.path}]");
+      return;
+    }
     if (currentEntry == null) {
       if (line is NoteLine) {
         return;
@@ -116,7 +120,7 @@ class LedgerLineProcessor {
     final postingLinesWithNoAmount = _currentPostingLines.where((postingLine) => postingLine.amount == null);
     final postingWithAmount = _currentPostingLines.where((postingLine) => postingLine.amount != null);
     if (postingLinesWithNoAmount.length > 1) {
-      throw Exception("Error at line $lineNumber: cannot add entry defined in previous lines, it contains more than one posting without an amount");
+      throw Exception("Error at line $lineNumber: cannot add entry defined in previous lines, it contains more than one posting without an amount:\n${postingLinesWithNoAmount.join("\n")}");
     }
     else if (postingLinesWithNoAmount.length == 1) {
       if (postingWithAmount.isEmpty) throw Exception("Error at line $lineNumber: cannot add entry defined in previous lines, it contains a single posting with no amount defined");
