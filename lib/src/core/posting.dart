@@ -1,6 +1,7 @@
 
 import 'package:ledger_cli/src/core/denominated_amount.dart';
 
+// A posting in a ledger
 class Posting {
   String account;
   String currency;

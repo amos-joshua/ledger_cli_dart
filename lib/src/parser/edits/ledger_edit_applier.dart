@@ -2,12 +2,15 @@ import '../../core/core.dart';
 import 'edits.dart';
 
 typedef LedgerEditApplyFailureHandler = void Function(LedgerEdit, Object, StackTrace);
+
+// Interface for LedgerEdit handling classes
 abstract class LedgerEditApplier {
   final LedgerEditApplyFailureHandler onApplyFailure;
   const LedgerEditApplier({required this.onApplyFailure});
   void apply(LedgerEdit edit);
 }
 
+// Default LedgerEditApplier, simply adds the entries/accounts it receives to a ledger
 class LedgerEditApplierDefault extends LedgerEditApplier {
   final Ledger ledger;
 

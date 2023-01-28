@@ -16,9 +16,11 @@ class Account {
   int get hashCode => name.hashCode;
 }
 
+// Manages a list of accounts
 class AccountManager {
   final accounts = <String, Account>{};
 
+  // Returns an account with the given name, adding it if necessary
   Account accountNamed(String name) {
     final existingAccount = accounts[name];
     if (existingAccount != null) return existingAccount;

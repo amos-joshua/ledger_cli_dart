@@ -2,6 +2,7 @@ import 'package:petitparser/petitparser.dart';
 import '../../core/core.dart';
 import 'ledger_line.dart';
 
+// Users PetitParser to parse strings into LedgerLines
 class LedgerLineDefinition extends GrammarDefinition {
   @override
   // NOTE: emptyLine should be last

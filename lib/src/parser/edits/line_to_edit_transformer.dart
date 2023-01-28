@@ -3,6 +3,9 @@ import 'edits.dart';
 import '../lines/ledger_line.dart';
 import 'ledger_line_pocessor.dart';
 
+// A StreamTransformer that converts LedgerLines into LedgerEdits
+//
+// Under the hood, uses LedgerLineProcessor
 class LedgerLineToEditsTransformer implements StreamTransformer<LedgerLine, LedgerEdit> {
   late final StreamController<LedgerEdit> _controller;
   StreamSubscription? _subscription;

@@ -1,6 +1,7 @@
 
 import 'posting.dart';
 
+// An entry's state, corresponding to '*', '!' or ''
 enum EntryState {
   uncleared, pending, cleared
 }
@@ -9,6 +10,7 @@ extension EntryStatusMethods on EntryState {
   String symbolString() => this == EntryState.pending ? "!" : this == EntryState.cleared ? "*" : "";
 }
 
+// An entry in the ledger
 class Entry {
   DateTime date;
   String code;

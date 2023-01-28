@@ -13,17 +13,9 @@ extension LedgerPeriodFunctions on LedgerPeriod {
 
 }
 
-abstract class Query {
+class Query {
   List<String> accounts;
   DateTime? startDate;
   DateTime? endDate;
   Query({this.accounts = const [], this.startDate, this.endDate});
-}
-
-class BalanceQuery extends Query {
-  BalanceQuery({super.accounts, super.startDate, super.endDate});
-}
-
-class PostingFilterQuery extends Query {
-  PostingFilterQuery({super.accounts, super.startDate, super.endDate});
 }

@@ -1,5 +1,5 @@
 
-
+// An amount with an associated currency
 class DenominatedAmount {
   double amount;
   String currency;
