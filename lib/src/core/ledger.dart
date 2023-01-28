@@ -11,4 +11,9 @@ class Ledger {
     entries.clear();
     accountManager.clear();
   }
+
+  void loadFrom(Ledger otherLedger) {
+    entries.addAll(otherLedger.entries);
+    accountManager.accounts.addAll(otherLedger.accountManager.accounts);
+  }
 }

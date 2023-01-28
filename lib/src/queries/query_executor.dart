@@ -8,7 +8,7 @@ class QueryExecutor {
   const QueryExecutor();
 
   bool postingMatches(Posting posting, Query query, DateTime date) {
-    if (!query.accounts.any((queryAccount) => posting.account.startsWith(queryAccount))) return false;
+    if (query.accounts.isNotEmpty && !query.accounts.any((queryAccount) => posting.account.startsWith(queryAccount))) return false;
     final startDate = query.startDate;
     if ((startDate != null) && (startDate.isAfter(date))) return false;
     final endDate = query.endDate;
