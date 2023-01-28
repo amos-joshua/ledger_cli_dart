@@ -4,6 +4,12 @@ import 'package:ledger_cli/src/parser/edits/edits.dart';
 import '../../core/core.dart';
 import '../lines/ledger_line.dart';
 
+// A class that "processes" a stream of LedgerLines into a stream of LedgerEdits.
+//
+// Currently implemented as a state machine that builds up each entry separately,
+// throwing an error if the next line received does not make sense for the
+// currently-built-up entry.
+// see also LedgerLineToEditsTransformer
 class LedgerLineProcessor {
   final knownAccounts = <String>[];
   LedgerLineProcessor({List<String> knownAccounts = const []}) {

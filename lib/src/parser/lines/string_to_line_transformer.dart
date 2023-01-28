@@ -3,7 +3,7 @@ import 'package:petitparser/petitparser.dart';
 import 'ledger_line_parser.dart';
 import 'ledger_line.dart';
 
-
+// StreamTransformer to convert String lines into LedgerLines
 class LedgerStringToLineTransformer implements StreamTransformer<String, LedgerLine> {
   static final ledgerLineDefinition = LedgerLineDefinition();
   late final Parser ledgerLineParser;

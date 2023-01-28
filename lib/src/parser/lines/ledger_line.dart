@@ -1,9 +1,10 @@
 import '../../core/core.dart';
 
+// Abstract parent for all LedgerLines, i.e. a parsed line in a ledger file
 abstract class LedgerLine {
 }
 
-
+// Represents an "include ..." line in a ledger file
 class IncludeLine extends LedgerLine {
   final String path;
   IncludeLine(this.path);
@@ -18,7 +19,7 @@ class IncludeLine extends LedgerLine {
   int get hashCode => path.hashCode;
 }
 
-
+// Represents an "entry" line in a ledger file, i.e. something like "2023/01/03 * Payee"
 class EntryLine extends LedgerLine {
   final DateTime date;
   final String code;
@@ -43,10 +44,12 @@ class EntryLine extends LedgerLine {
   int get hashCode => Object.hash(date, code, payee, state, note);
 }
 
+// Represents an empty line in a ledger file
 class EmptyLine extends LedgerLine {
   static final empty = EmptyLine();
 }
 
+// Represents a note line in a ledger file
 class NoteLine extends LedgerLine {
   final String note;
   NoteLine(this.note);
@@ -61,6 +64,7 @@ class NoteLine extends LedgerLine {
   int get hashCode => note.hashCode;
 }
 
+// Represents an account line in a ledger file, i.e. "account ...."
 class AccountLine extends LedgerLine {
   final String name;
   AccountLine(this.name);
@@ -75,7 +79,7 @@ class AccountLine extends LedgerLine {
   int get hashCode => name.hashCode;
 }
 
-
+// Represents a posting line in a ledger file, i.e. looks like "  Assets::CC     50 USD"
 class PostingLine extends LedgerLine {
   String account;
   String currency;

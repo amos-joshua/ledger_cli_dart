@@ -1,5 +1,6 @@
 import 'entry.dart';
 
+// Convenience class to formats date as 'YYYY/mm/dd`
 class LedgerDateFormatter {
   const LedgerDateFormatter();
 
@@ -7,6 +8,7 @@ class LedgerDateFormatter {
   String format(DateTime date) => "${date.year}/${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}";
 }
 
+// Convenience class to format stats as '* ' or '! ' or ''
 class EntryStateFormatter {
   const EntryStateFormatter();
 
@@ -14,6 +16,7 @@ class EntryStateFormatter {
   String format(EntryState state) => state == EntryState.uncleared ? "" : "${state.symbolString()} ";
 }
 
+// Convenience class to format notes
 class EntryNoteFormatter {
   const EntryNoteFormatter();
 

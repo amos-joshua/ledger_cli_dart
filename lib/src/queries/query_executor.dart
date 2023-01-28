@@ -20,7 +20,7 @@ class QueryExecutor {
     return ledger.entries.expand((entry) => entry.postings.where((posting) => postingMatches(posting, query, entry.date)).map((posting) => InvertedPosting(posting:posting, parent:entry)));
   }
 
-  BalanceResult queryBalance(Ledger ledger, BalanceQuery query) {
+  BalanceResult queryBalance(Ledger ledger, Query query) {
     final matches = postingsMatching(ledger, query);
     final result = BalanceResult(balances: {});
     for (final invertedPosting in matches) {
@@ -29,7 +29,7 @@ class QueryExecutor {
     return result;
   }
 
-  PostingFilterResult queryFilter(Ledger ledger, PostingFilterQuery query) {
+  PostingFilterResult queryFilter(Ledger ledger, Query query) {
     final matches = postingsMatching(ledger, query);
     return PostingFilterResult(matches: matches.toList(growable: false));
   }

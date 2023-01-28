@@ -2,6 +2,7 @@ import '../../core/core.dart';
 import 'edits.dart';
 import 'ledger_edit_applier.dart';
 
+// Receives a stream of LedgerEdits and routes them to a LedgerEditApplier
 class LedgerEditReceiver {
   final LedgerEditApplier editApplier;
   LedgerEditReceiver({required this.editApplier});

@@ -7,7 +7,11 @@ import 'edits/ledger_edit_applier.dart';
 import 'lines/string_to_line_transformer.dart';
 import 'edits/line_to_edit_transformer.dart';
 
-
+// Reads a ledger file and loads a Ledger instance from it
+//
+// This is accomplished by stringing together a line splitter, a
+// LedgerStringToLineTransformer and a LedgerLineToEditsTransformer and feeding
+// them into a LedgerEditReceiver
 class LedgerFileLoader {
 
   const  LedgerFileLoader();
