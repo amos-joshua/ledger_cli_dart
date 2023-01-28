@@ -1,6 +1,4 @@
 
-import 'package:ledger_cli/ledger_cli.dart';
-
 class Account {
   String name;
 
