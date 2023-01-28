@@ -1,4 +1,3 @@
-import 'package:ledger_cli/ledger_cli.dart';
 
 import '../core/core.dart';
 import 'inverted_posting.dart';
