@@ -16,6 +16,6 @@ ledgerFileLoader.load('/path/to/ledger/file', onApplyFailure: (edit, exc, stackT
     });
 ```
 
-Currently only basic parsing of a single file is supported, and no queries or reports are supported. 
+Currently only basic parsing of a single file is supported, with very basic queries.
 
 See also [ledger_cli_flutter](https://github.com/amos-joshua/ledger_cli_flutter).
