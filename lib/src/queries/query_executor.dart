@@ -7,8 +7,9 @@ import 'query_result.dart';
 class QueryExecutor {
   const QueryExecutor();
 
-  bool postingMatches(Posting posting, Query query, DateTime date) {
-    if (query.accounts.isNotEmpty && !query.accounts.any((queryAccount) => posting.account.startsWith(queryAccount))) return false;
+  bool postingMatches(Posting posting, Query query, DateTime date, String payee) {
+    if (query.accounts.isNotEmpty && !query.accounts.any((queryAccount) => posting.account.toLowerCase().startsWith(queryAccount.toLowerCase()))) return false;
+    if (query.searchTerm.isNotEmpty && !payee.contains(query.searchTerm.toLowerCase())) return false;
     final startDate = query.startDate;
     if ((startDate != null) && (startDate.isAfter(date))) return false;
     final endDate = query.endDate;
@@ -17,7 +18,7 @@ class QueryExecutor {
   }
 
   Iterable<InvertedPosting> postingsMatching(Ledger ledger, Query query) {
-    return ledger.entries.expand((entry) => entry.postings.where((posting) => postingMatches(posting, query, entry.date)).map((posting) => InvertedPosting(posting:posting, parent:entry)));
+    return ledger.entries.expand((entry) => entry.postings.where((posting) => postingMatches(posting, query, entry.date, entry.payee.toLowerCase())).map((posting) => InvertedPosting(posting:posting, parent:entry)));
   }
 
   BalanceResult queryBalance(Ledger ledger, Query query) {

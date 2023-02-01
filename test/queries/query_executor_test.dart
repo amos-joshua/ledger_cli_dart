@@ -52,7 +52,7 @@ void main() {
   });
 
   group('filter queries', () {
-    test('filter expenses', () {
+    test('filter by expense accounts', () {
       final entry1 = testLedger.entries[1];
       final entry2 = testLedger.entries[2];
       final entry3 = testLedger.entries[3];
@@ -62,6 +62,15 @@ void main() {
         InvertedPosting(posting: entry2.postings[1], parent: entry2),
         InvertedPosting(posting: entry2.postings[2], parent: entry2),
         InvertedPosting(posting: entry3.postings[1], parent: entry3),
+      ]));
+    });
+
+    test('filter by payee', () {
+      final entry1 = testLedger.entries[1];
+      final result = queryExecutor.queryFilter(testLedger, Query(searchTerm: 'AB'));
+      expect(result, PostingFilterResult(matches: [
+        InvertedPosting(posting: entry1.postings[0], parent: entry1),
+        InvertedPosting(posting: entry1.postings[1], parent: entry1),
       ]));
     });
   });

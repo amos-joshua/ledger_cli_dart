@@ -5,7 +5,7 @@ class DenominatedAmount {
   String currency;
   DenominatedAmount(this.amount, this.currency);
 
-  @override toString() => "$amount${currency.isEmpty ? '' : ' $currency'}";
+  @override toString() => "${amount.toStringAsFixed(2)}${currency.isEmpty ? '' : ' $currency'}";
 
   @override
   bool operator ==(Object other) => (other is DenominatedAmount) && (amount == other.amount) && (currency == other.currency);
