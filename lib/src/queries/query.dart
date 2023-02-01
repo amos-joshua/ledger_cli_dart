@@ -20,7 +20,7 @@ class Query {
   DateTime? endDate;
   Query({this.accounts = const [], this.searchTerm = '', this.startDate, this.endDate});
 
-  Query modify({List<String>? accounts, String? searchTerm, DateTime? startDate, DateTime? endDate}) {
+  Query modify({List<String>? accounts, String? searchTerm}) {
     return Query(
       accounts: accounts ?? this.accounts,
       searchTerm: searchTerm ?? this.searchTerm,
@@ -28,4 +28,5 @@ class Query {
       endDate: endDate ?? this.endDate
     );
   }
+
 }
