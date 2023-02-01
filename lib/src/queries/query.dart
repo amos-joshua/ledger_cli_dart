@@ -15,7 +15,17 @@ extension LedgerPeriodFunctions on LedgerPeriod {
 
 class Query {
   List<String> accounts;
+  String searchTerm;
   DateTime? startDate;
   DateTime? endDate;
-  Query({this.accounts = const [], this.startDate, this.endDate});
+  Query({this.accounts = const [], this.searchTerm = '', this.startDate, this.endDate});
+
+  Query modify({List<String>? accounts, String? searchTerm, DateTime? startDate, DateTime? endDate}) {
+    return Query(
+      accounts: accounts ?? this.accounts,
+      searchTerm: searchTerm ?? this.searchTerm,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate
+    );
+  }
 }

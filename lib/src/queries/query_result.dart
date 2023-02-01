@@ -11,7 +11,7 @@ class PostingFilterResult implements QueryResult {
 
 
   @override
-  String toString() => 'PostingFilterResult(${matches.map((invertedPosting) => '$invertedPosting').join('\n')}';
+  String toString() => 'PostingFilterResult(${matches.map((invertedPosting) => '$invertedPosting').join('\n')})';
 
   @override
   bool operator ==(Object other) {
