@@ -1,4 +1,9 @@
 
+## 0.2.0
+
+- Remove InvertedPosting class
+- introduce Period and grouped balance queries
+
 ## 0.1.1
 
 - Fix typo in DenominatedAmount
