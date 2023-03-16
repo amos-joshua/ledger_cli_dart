@@ -1,8 +1,10 @@
-import 'package:ledger_cli/src/queries/inverted_posting.dart';
 
 import '../core/core.dart';
+import 'results/balance_result.dart';
+import 'results/posting_filter_result.dart';
 import 'query.dart';
-import 'query_result.dart';
+import 'results/query_result.dart';
+import 'inverted_posting.dart';
 
 class QueryExecutor {
   const QueryExecutor();
@@ -23,11 +25,11 @@ class QueryExecutor {
 
   BalanceResult queryBalance(Ledger ledger, Query query) {
     final matches = postingsMatching(ledger, query);
-    final result = BalanceResult(balances: {});
+    final resultBuilder = BalanceResultsBuilder();
     for (final invertedPosting in matches) {
-      result.add(invertedPosting.posting.account, invertedPosting.posting.denominatedAmount);
+      resultBuilder.add(invertedPosting.posting.account, invertedPosting.parent.date, invertedPosting.posting.denominatedAmount);
     }
-    return result;
+    return resultBuilder.build();
   }
 
   PostingFilterResult queryFilter(Ledger ledger, Query query) {

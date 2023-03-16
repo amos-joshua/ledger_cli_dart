@@ -1,8 +1,12 @@
-library core;
+
+export 'account.dart';
+export 'balance_entry.dart';
+export 'denominated_amount.dart';
 
 export "entry.dart";
-export "posting.dart";
-export 'account.dart';
-export 'ledger.dart';
 export 'formatters.dart';
-export 'denominated_amount.dart';
+
+export 'ledger.dart';
+
+export "posting.dart";
+export 'period.dart';
