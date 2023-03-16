@@ -43,7 +43,7 @@ class PeriodMatcher extends Matcher {
 
 
 void main() {
-  final mar11_1999 = DateTime(1999, 03, 11);
+  final mar11_2019 = DateTime(2019, 03, 11);
 
   final jan1_2020 = DateTime(2020, 01, 01);
   final jan5_2020 = DateTime(2020, 01, 05);
@@ -60,7 +60,7 @@ void main() {
   final feb29_2020 = DateTime(2020, 02, 29);
 
   final mar1_2020 = DateTime(2020, 03, 01);
-  final mar10_2020 = DateTime(2020, 03, 11);
+  final mar10_2020 = DateTime(2020, 03, 10);
   final mar11_2020 = DateTime(2020, 03, 11);
 
   final apr11_2020 = DateTime(2020, 04, 11);
@@ -132,8 +132,8 @@ void main() {
     });
 
     test('year tests starting on 2020-03-11', () {
-      expect(Period.yearFor(mar11_2020, jan8_2020), PeriodMatcher.year(mar11_1999, mar10_2020));
-      expect(Period.yearFor(mar11_2020, mar10_2020), PeriodMatcher.year(mar11_1999, mar10_2020));
+      expect(Period.yearFor(mar11_2020, jan8_2020), PeriodMatcher.year(mar11_2019, mar10_2020));
+      expect(Period.yearFor(mar11_2020, mar10_2020), PeriodMatcher.year(mar11_2019, mar10_2020));
       expect(Period.yearFor(mar11_2020, mar11_2020), PeriodMatcher.year(mar11_2020, mar10_2021));
       expect(Period.yearFor(mar11_2020, apr11_2020), PeriodMatcher.year(mar11_2020, mar10_2021));
       expect(Period.yearFor(mar11_2020, mar10_2021), PeriodMatcher.year(mar11_2020, mar10_2021));
