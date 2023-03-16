@@ -13,3 +13,11 @@ class DenominatedAmount {
   @override
   int get hashCode => Object.hash(amount, currency);
 }
+
+class CurrencyMismatch implements Exception {
+  final String message;
+  const CurrencyMismatch(this.message);
+
+  @override
+  String toString() => 'CurrencyMismatch($message)';
+}

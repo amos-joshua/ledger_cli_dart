@@ -1,5 +1,6 @@
 
 import 'posting.dart';
+import 'denominated_amount.dart';
 
 // An entry's state, corresponding to '*', '!' or ''
 enum EntryState {
@@ -38,6 +39,16 @@ class Entry {
       if (postings[i] != other.postings[i]) return false;
     }
     return true;
+  }
+
+  // TODO: test
+  Iterable<Posting> postingsForAccount(String account) => postings.where((posting) => posting.account == account);
+
+  // TODO: test
+  DenominatedAmount amountForAccount(String account) {
+    final accountPostings = postingsForAccount(account);
+    if (accountPostings.isEmpty) return DenominatedAmount(0, '');
+    return DenominatedAmount(accountPostings.fold(0, (initialValue, posting) => initialValue + posting.amount), accountPostings.first.currency);
   }
 
   @override
