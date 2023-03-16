@@ -41,10 +41,8 @@ class Entry {
     return true;
   }
 
-  // TODO: test
   Iterable<Posting> postingsForAccount(String account) => postings.where((posting) => posting.account == account);
 
-  // TODO: test
   DenominatedAmount amountForAccount(String account) {
     final accountPostings = postingsForAccount(account);
     if (accountPostings.isEmpty) return DenominatedAmount(0, '');

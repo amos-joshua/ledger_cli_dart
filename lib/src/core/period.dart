@@ -1,5 +1,4 @@
 
-import 'package:ledger_cli/src/core/core.dart';
 
 import 'denominated_amount.dart';
 import 'date_range.dart';
@@ -93,37 +92,12 @@ class Period {
   String toString() => 'Period.${length.name}(${ledgerDateFormatter.format(dateRange.startDateInclusive)}, ${ledgerDateFormatter.format(dateRange.endDateInclusive)})';
 }
 
-/*
-class PeriodBucket {
-  final Period period;
-  DenominatedAmount denominatedAmount = DenominatedAmount(0, '');
-  
-  PeriodBucket({required this.period});
-
-  void add(DenominatedAmount newDenominatedAmount) {
-    if (denominatedAmount.amount == 0) {
-      denominatedAmount.currency = newDenominatedAmount.currency;
-      denominatedAmount.amount = newDenominatedAmount.amount;
-    }
-    else if (denominatedAmount.currency == newDenominatedAmount.currency) {
-      denominatedAmount.amount += newDenominatedAmount.amount;
-    }
-    else {
-      throw CurrencyMismatch('Cannot add $newDenominatedAmount to $denominatedAmount, currency mismatch');
-    }
-  }
-  
-  bool acceptsDate(DateTime date) => period.includesDate(date);
-}*/
-
-
 class AccountAmountsMap {
   final Map<String, DenominatedAmount> _amounts = {};
   AccountAmountsMap();
 
   Iterable<String> get accounts => _amounts.keys;
 
-  // TODO test
   void add(String account, DenominatedAmount newDenominatedAmount) {
     final denominatedAmount = _amounts[account] ?? DenominatedAmount(0, newDenominatedAmount.currency);
     denominatedAmount.amount += newDenominatedAmount.amount;
@@ -137,7 +111,6 @@ class PeriodAccountAmountsMap {
   final Map<Period, AccountAmountsMap> _accountAmounts = {};
   PeriodAccountAmountsMap();
 
-  // TODO test
   void add(Period period, String account, DenominatedAmount denominatedAmount) {
     final accountAmountsMap = _accountAmounts[period] ?? AccountAmountsMap();
     accountAmountsMap.add(account, denominatedAmount);
@@ -148,32 +121,3 @@ class PeriodAccountAmountsMap {
 
   AccountAmountsMap amountsFor(Period period) => _accountAmounts[period] ?? AccountAmountsMap();
 }
-
-/*
-class PeriodBucketsContainer {
-  final Map<Period, PeriodBucket> periods = {};
-  final DateTime startDate;
-  final PeriodLength periodLength;
-  PeriodBucketsContainer({required this.startDate, required this.periodLength});
-  
-  void add(DateTime date, DenominatedAmount newDenominatedAmount) {
-    final period = Period.periodFor(startDate, date, periodLength);
-    final bucket = periods[period] ?? PeriodBucket(period: period);
-    bucket.add(newDenominatedAmount);
-    periods[period] = bucket;
-  }
-}*/
-
-/*
-class PeriodBucketSorter {
-  final Map<String, PeriodBucketsContainer> _bucketContainers = {};
-  final DateTime startDate;
-  final PeriodLength periodLength;
-  PeriodBucketSorter({required this.startDate, required this.periodLength});
-  
-  void add(String account, DateTime date, DenominatedAmount denominatedAmount) {
-    final bucketContainer = _bucketContainers[account] ?? PeriodBucketsContainer(startDate: startDate, periodLength: periodLength);
-    bucketContainer.add(date, denominatedAmount);
-    _bucketContainers[account] = bucketContainer;
-  }
-}*/
