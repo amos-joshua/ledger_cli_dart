@@ -1,10 +1,8 @@
 
 import '../core/core.dart';
 import 'results/balance_result.dart';
-import 'results/posting_filter_result.dart';
+import 'results/entry_filter_result.dart';
 import 'query.dart';
-import 'results/query_result.dart';
-import 'inverted_posting.dart';
 
 class QueryExecutor {
   const QueryExecutor();
@@ -19,21 +17,28 @@ class QueryExecutor {
     return true;
   }
 
-  Iterable<InvertedPosting> postingsMatching(Ledger ledger, Query query) {
-    return ledger.entries.expand((entry) => entry.postings.where((posting) => postingMatches(posting, query, entry.date, entry.payee.toLowerCase())).map((posting) => InvertedPosting(posting:posting, parent:entry)));
+  Iterable<Entry> entriesMatching(Ledger ledger, Query query) {
+    return ledger.entries.where((entry) => entry.postings.any((posting) => postingMatches(posting, query, entry.date, entry.payee.toLowerCase())));
   }
 
   BalanceResult queryBalance(Ledger ledger, Query query) {
-    final matches = postingsMatching(ledger, query);
-    final resultBuilder = BalanceResultsBuilder();
-    for (final invertedPosting in matches) {
-      resultBuilder.add(invertedPosting.posting.account, invertedPosting.parent.date, invertedPosting.posting.denominatedAmount);
+    final matches = entriesMatching(ledger, query);
+    final resultBuilder = BalanceResultsBuilder(startDate: query.startDate, periodLength: query.groupBy);
+    for (final entry in matches) {
+      final postings = entry.postings.where((posting) => postingMatches(posting, query, entry.date, entry.payee.toLowerCase()));
+      final uniqueAccounts = [];
+      for (final posting in postings) {
+        if (uniqueAccounts.contains(posting.account)) continue;
+        final denominatedAmount = entry.amountForAccount(posting.account);
+        resultBuilder.add(posting.account, entry.date, denominatedAmount);
+        uniqueAccounts.add(posting.account);
+      }
     }
     return resultBuilder.build();
   }
 
-  PostingFilterResult queryFilter(Ledger ledger, Query query) {
-    final matches = postingsMatching(ledger, query);
-    return PostingFilterResult(matches: matches.toList(growable: false));
+  EntryFilterResult queryFilter(Ledger ledger, Query query) {
+    final matches = entriesMatching(ledger, query);
+    return EntryFilterResult(matches: matches.toList(growable: false));
   }
 }

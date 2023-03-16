@@ -28,6 +28,10 @@ final testLedger = Ledger()..entries.addAll([
     Posting(account: 'Assets:Checking Account', currency: 'USD', amount: -20),
     Posting(account: 'Expenses:Music', currency: 'USD', amount: 20),
   ]),
+  Entry(date: DateTime(2000, 01, 04), code:'', payee: 'UVW', state: EntryState.cleared, postings: [
+    Posting(account: 'Assets:Credit Card', currency: 'EUR', amount: -5),
+    Posting(account: 'Expenses:Food', currency: 'EUR', amount: 5),
+  ])
 ]);
 
 void main() {
@@ -39,7 +43,7 @@ void main() {
       expect(result, BalanceResult(
         balances: [
           BalanceEntry(account: 'Assets:Checking Account', denominatedAmount: DenominatedAmount(70, 'USD')),
-          BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-30, 'EUR'))
+          BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-35, 'EUR'))
         ]
       ));
     });
@@ -59,19 +63,43 @@ void main() {
       expect(result, BalanceResult(
           balances: [
             BalanceEntry(account: 'Assets:Checking Account', denominatedAmount: DenominatedAmount(-130, 'USD')),
-            BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-30, 'EUR'))
+            BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-35, 'EUR'))
           ]
       ));
     });
 
     test('query assets with monthly period', () {
-      final result = queryExecutor.queryBalance(testLedger, Query(accounts: ['Assets'], startDate: DateTime(1999, 02, 02)));
-      expect(result, BalanceResult(
-          balances: [
-            BalanceEntry(account: 'Assets:Checking Account', denominatedAmount: DenominatedAmount(-130, 'USD')),
-            BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-30, 'EUR'))
-          ]
-      ));
+      final feb1_1999 = DateTime(1999, 02, 01);
+      final apr1_1999 = DateTime(1999, 04, 01);
+      final jan4_2000 = DateTime(2000, 01, 04);
+      final feb_1999 = Period.monthFor(feb1_1999, feb1_1999);
+      final apr_1999 = Period.monthFor(feb1_1999, apr1_1999);
+      final jan_2000 = Period.monthFor(feb1_1999, jan4_2000);
+
+      final result = queryExecutor.queryBalance(testLedger, Query(accounts: ['Assets'], startDate: feb1_1999, groupBy: PeriodLength.month));
+      expect(result.balances, [
+            BalanceEntry(account: 'Assets:Checking Account', denominatedAmount: DenominatedAmount(100, 'USD'), period: feb_1999),
+            BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-30, 'EUR'), period: feb_1999),
+            BalanceEntry(account: 'Assets:Checking Account', denominatedAmount: DenominatedAmount(-30, 'USD'), period: apr_1999),
+            BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-5, 'EUR'), period: jan_2000),
+      ]
+      );
+    });
+
+    test('query assets with yearly period', () {
+      final jan1_1999 = DateTime(1999, 01, 01);
+      final jan1_2000 = DateTime(2000, 01, 01);
+      final jan4_2000 = DateTime(2000, 01, 04);
+      final year_1999 = Period.yearFor(jan1_1999, jan1_1999);
+      final year_2000 = Period.yearFor(jan1_1999, jan1_2000);
+
+      final result = queryExecutor.queryBalance(testLedger, Query(accounts: ['Assets'], startDate: jan1_1999, groupBy: PeriodLength.year));
+      expect(result.balances, [
+        BalanceEntry(account: 'Assets:Checking Account', denominatedAmount: DenominatedAmount(70, 'USD'), period: year_1999),
+        BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-30, 'EUR'), period: year_1999),
+        BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-5, 'EUR'), period: year_2000),
+      ]
+      );
     });
   });
 
@@ -81,27 +109,25 @@ void main() {
     final entry3 = testLedger.entries[3];
     final entry4 = testLedger.entries[4];
     final entry5 = testLedger.entries[5];
+    final entry6 = testLedger.entries[6];
+
 
     test('filter by expense accounts', () {
-
       final result = queryExecutor.queryFilter(testLedger, Query(accounts: ['Expenses']));
-      expect(result, PostingFilterResult(matches: [
-        InvertedPosting(posting: entry1.postings[1], parent: entry1),
-        InvertedPosting(posting: entry2.postings[1], parent: entry2),
-        InvertedPosting(posting: entry2.postings[2], parent: entry2),
-        InvertedPosting(posting: entry3.postings[1], parent: entry3),
-        InvertedPosting(posting: entry4.postings[1], parent: entry4),
-        InvertedPosting(posting: entry5.postings[1], parent: entry5),
+      expect(result, EntryFilterResult(matches: [
+        entry1,
+        entry2,
+        entry3,
+        entry4,
+        entry5,
+        entry6
       ]));
     });
 
     test('filter by payee', () {
       final result = queryExecutor.queryFilter(testLedger, Query(searchTerm: 'AB'));
       expect(result.matches,  [
-        InvertedPosting(posting: entry1.postings[0], parent: entry1),
-        InvertedPosting(posting: entry1.postings[1], parent: entry1),
-        InvertedPosting(posting: entry4.postings[0], parent: entry4),
-        InvertedPosting(posting: entry4.postings[1], parent: entry4),
+        entry1, entry4
       ]);
     });
   });
