@@ -47,7 +47,13 @@ class BalanceResultsBuilder {
       for (final account in accountsAmountMap.accounts) {
         final denominatedAmount = accountsAmountMap.denominatedAmountFor(account);
         final entry = BalanceEntry(account: account, denominatedAmount: denominatedAmount, period: period.isForever ? null : period);
-        entries.add(entry);
+        // NOTE: this is a heuristic to get the order right. Should use a better approach
+        if (period.isForever) {
+          entries.add(entry);
+        }
+        else {
+          entries.insert(0, entry);
+        }
       }
     }
     return BalanceResult(balances: entries);
