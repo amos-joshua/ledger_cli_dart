@@ -78,10 +78,10 @@ void main() {
 
       final result = queryExecutor.queryBalance(testLedger, Query(accounts: ['Assets'], startDate: feb1_1999, groupBy: PeriodLength.month));
       expect(result.balances, [
-            BalanceEntry(account: 'Assets:Checking Account', denominatedAmount: DenominatedAmount(100, 'USD'), period: feb_1999),
-            BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-30, 'EUR'), period: feb_1999),
-            BalanceEntry(account: 'Assets:Checking Account', denominatedAmount: DenominatedAmount(-30, 'USD'), period: apr_1999),
-            BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-5, 'EUR'), period: jan_2000),
+        BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-5, 'EUR'), period: jan_2000),
+        BalanceEntry(account: 'Assets:Checking Account', denominatedAmount: DenominatedAmount(-30, 'USD'), period: apr_1999),
+        BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-30, 'EUR'), period: feb_1999),
+        BalanceEntry(account: 'Assets:Checking Account', denominatedAmount: DenominatedAmount(100, 'USD'), period: feb_1999)
       ]
       );
     });
@@ -95,9 +95,9 @@ void main() {
 
       final result = queryExecutor.queryBalance(testLedger, Query(accounts: ['Assets'], startDate: jan1_1999, groupBy: PeriodLength.year));
       expect(result.balances, [
-        BalanceEntry(account: 'Assets:Checking Account', denominatedAmount: DenominatedAmount(70, 'USD'), period: year_1999),
-        BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-30, 'EUR'), period: year_1999),
         BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-5, 'EUR'), period: year_2000),
+        BalanceEntry(account: 'Assets:Credit Card', denominatedAmount: DenominatedAmount(-30, 'EUR'), period: year_1999),
+        BalanceEntry(account: 'Assets:Checking Account', denominatedAmount: DenominatedAmount(70, 'USD'), period: year_1999),
       ]
       );
     });
