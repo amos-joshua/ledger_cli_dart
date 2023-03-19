@@ -1,6 +1,7 @@
 
 export 'account.dart';
 export 'balance_entry.dart';
+export 'date_range.dart';
 export 'denominated_amount.dart';
 
 export "entry.dart";
