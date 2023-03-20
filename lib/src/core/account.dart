@@ -1,8 +1,11 @@
 
 class Account {
   String name;
+  final matchers = <String>[];
 
   Account({required this.name});
+
+  bool matches(String description) => matchers.any((matcher) => description.contains(matcher));
 
   @override
   String toString() => 'Account($name)';
@@ -26,6 +29,11 @@ class AccountManager {
     accounts[name] = newAccount;
     return newAccount;
   }
+
+  Account? accountMatching(String description) {
+    final lowercaseDescription = description.toLowerCase();
+    return accounts.values.cast<Account?>().firstWhere((account) => account?.matches(lowercaseDescription) == true, orElse: () => null);
+  } 
 
   void clear() {
     accounts.clear();

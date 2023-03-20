@@ -62,9 +62,12 @@ void main() {
 
   group('ImportSession', () {
     test('ImportSession test 1', () async {
-      const csvDataLoader = CsvDataLoader();
-      final csvDataStream = Stream.value(testDataBnp);
-      final csvLinesStream = csvDataLoader.openStreamFromStringData(csvDataStream, csvFormat: csvFormatBnp);
+      final csvLinesStream = Stream.fromIterable([bnpCsvLine1, bnpCsvLine2, bnpCsvLine3]);
+      final accountManager = AccountManager();
+      final account1 = accountManager.accountNamed('Expenses:food');
+      final account2 = accountManager.accountNamed('Expenses:gas');
+      account1.matchers.add('transfer 1');
+      account2.matchers.add('transfer 2');
       final importAccount = ImportAccount(
           label: 'bnp1',
           sourceAccount: 'Assets:checking',
@@ -72,15 +75,12 @@ void main() {
           csvFormat: csvFormatBnp,
           defaultDestinationAccount: 'Expenses:misc'
       );
-      final importSession = ImportSession();
+      final importSession = ImportSession(accountManager: accountManager);
       await importSession.loadCsvLines(csvLinesStream, importAccount: importAccount);
       expect(importSession.pendingEntries, [
-        PendingImportedEntry(csvLine: bnpCsvLine1, importAccount: importAccount),
-        PendingImportedEntry(csvLine: bnpCsvLine2, importAccount: importAccount),
-        PendingImportedEntry(csvLine: bnpCsvLine3, importAccount: importAccount),
-        PendingImportedEntry(csvLine: bnpCsvLine4, importAccount: importAccount),
-        PendingImportedEntry(csvLine: bnpCsvLine5, importAccount: importAccount),
-        PendingImportedEntry(csvLine: bnpCsvLine6, importAccount: importAccount),
+        PendingImportedEntry(csvLine: bnpCsvLine1, importAccount: importAccount, destinationAccount: 'Expenses:food'),
+        PendingImportedEntry(csvLine: bnpCsvLine2, importAccount: importAccount, destinationAccount: 'Expenses:gas'),
+        PendingImportedEntry(csvLine: bnpCsvLine3, importAccount: importAccount, destinationAccount: ''),
       ]);
     });
   });

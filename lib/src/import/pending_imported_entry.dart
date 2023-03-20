@@ -4,8 +4,8 @@ import 'import_account.dart';
 class PendingImportedEntry {
   final CsvLine csvLine;
   final ImportAccount importAccount;
-  String destinationAccount = '';
-  PendingImportedEntry({required this.csvLine, required this.importAccount});
+  String destinationAccount;
+  PendingImportedEntry({required this.csvLine, required this.importAccount, this.destinationAccount = ''});
 
   @override
   String toString() => 'PendingImportedEntry(csvLine: $csvLine, importAccount: $importAccount, destinationAccount: $destinationAccount)';
