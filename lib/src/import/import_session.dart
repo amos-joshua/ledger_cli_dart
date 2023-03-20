@@ -1,7 +1,7 @@
 import 'pending_imported_entry.dart';
 import '../parser/csv/csv_line.dart';
 import '../core/account.dart';
-import 'import_account.dart';
+import '../core/import_account.dart';
 
 class ImportSession {
   final AccountManager accountManager;
