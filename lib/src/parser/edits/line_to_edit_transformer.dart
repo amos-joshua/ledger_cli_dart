@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'edits.dart';
-import '../lines/ledger_line.dart';
-import 'ledger_line_pocessor.dart';
+import '../ledger_lines/ledger_line.dart';
+import 'ledger_line_processor.dart';
 
 // A StreamTransformer that converts LedgerLines into LedgerEdits
 //

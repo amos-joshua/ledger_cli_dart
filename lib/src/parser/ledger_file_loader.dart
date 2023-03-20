@@ -4,7 +4,7 @@ import 'dart:io';
 import '../core/core.dart';
 import 'edits/ledger_edit_receiver.dart';
 import 'edits/ledger_edit_applier.dart';
-import 'lines/string_to_line_transformer.dart';
+import 'ledger_lines/string_to_line_transformer.dart';
 import 'edits/line_to_edit_transformer.dart';
 
 // Reads a ledger file and loads a Ledger instance from it

@@ -64,5 +64,4 @@ class LedgerStringToLineTransformer implements StreamTransformer<String, LedgerL
   StreamTransformer<RS, RT> cast<RS, RT>() {
     throw UnimplementedError();
   }
-
 }

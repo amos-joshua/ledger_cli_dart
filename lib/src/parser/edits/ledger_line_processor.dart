@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:ledger_cli/src/parser/edits/edits.dart';
 
 import '../../core/core.dart';
-import '../lines/ledger_line.dart';
+import '../ledger_lines/ledger_line.dart';
 
 // A class that "processes" a stream of LedgerLines into a stream of LedgerEdits.
 //
