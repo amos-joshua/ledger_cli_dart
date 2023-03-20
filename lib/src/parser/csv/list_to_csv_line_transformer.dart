@@ -62,8 +62,8 @@ class ListToCsvLineTransformer implements StreamTransformer<List<dynamic>, CsvLi
       throw Exception("Error parsing line #$lineNumber [$data]: expected value at index ${csvFormat.descriptionColumnIndex} to be a string but got [$description] which is a [${description.runtimeType}] instead");
     }
 
-    if (amountObj is double) {
-      amount = amountObj;
+    if (amountObj is num) {
+      amount = amountObj.toDouble();
     }
     else {
       try {
