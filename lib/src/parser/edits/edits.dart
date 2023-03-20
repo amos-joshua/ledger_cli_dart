@@ -1,5 +1,3 @@
-import 'package:ledger_cli/ledger_cli.dart';
-
 import '../../core/core.dart';
 
 // Abstract parent of all ledger edits (results of reading a LedgerLine stream)
