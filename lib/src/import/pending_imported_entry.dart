@@ -1,5 +1,5 @@
 import '../parser/csv/csv_line.dart';
-import 'import_account.dart';
+import '../core/import_account.dart';
 
 class PendingImportedEntry {
   final CsvLine csvLine;
