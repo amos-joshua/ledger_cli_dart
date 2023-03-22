@@ -5,7 +5,18 @@ class PendingImportedEntry {
   final CsvLine csvLine;
   final ImportAccount importAccount;
   String destinationAccount;
+  bool processed = false;
+  bool markedForDeletion = false;
   PendingImportedEntry({required this.csvLine, required this.importAccount, this.destinationAccount = ''});
+
+  void updateDestinationAccount(String newDestinationAccount) {
+    destinationAccount = newDestinationAccount;
+    processed = true;
+  }
+
+  void toggleMarkForDeletion() {
+    markedForDeletion = !markedForDeletion;
+  }
 
   @override
   String toString() => 'PendingImportedEntry(csvLine: $csvLine, importAccount: $importAccount, destinationAccount: $destinationAccount)';
