@@ -45,7 +45,7 @@ class CsvFormat {
 
 }
 
-final csvFormatBnp = CsvFormat(name: 'bnp',
+const csvFormatBnp = CsvFormat(name: 'bnp',
     dateColumnIndex: 0,
     descriptionColumnIndex: 3,
     amountColumnIndex: 4,
@@ -56,7 +56,7 @@ final csvFormatBnp = CsvFormat(name: 'bnp',
     valueSeparator: ';',
     quoteCharacter: null);
 
-final csvFormatWise = CsvFormat(name: 'wise',
+const csvFormatWise = CsvFormat(name: 'wise',
     dateColumnIndex: 1,
     descriptionColumnIndex: 13,
     amountColumnIndex: 2,
@@ -67,7 +67,7 @@ final csvFormatWise = CsvFormat(name: 'wise',
     valueSeparator: ",",
     quoteCharacter: null);
 
-final csvFormatBankOfAmerica = CsvFormat(name: 'bank-of-america',
+const csvFormatBankOfAmerica = CsvFormat(name: 'bank-of-america',
     dateColumnIndex: 0,
     descriptionColumnIndex: 1,
     amountColumnIndex: 2,
@@ -78,7 +78,7 @@ final csvFormatBankOfAmerica = CsvFormat(name: 'bank-of-america',
     valueSeparator: ',',
     quoteCharacter: '"');
 
-final csvFormatUsBank = CsvFormat(name: 'usbank',
+const csvFormatUsBank = CsvFormat(name: 'usbank',
     dateColumnIndex: 0,
     descriptionColumnIndex: 2,
     amountColumnIndex: 4,
@@ -89,7 +89,7 @@ final csvFormatUsBank = CsvFormat(name: 'usbank',
     valueSeparator: ',',
     quoteCharacter: '"');
 
-final csvFormatChase = CsvFormat(name: 'chase',
+const csvFormatChase = CsvFormat(name: 'chase',
     dateColumnIndex: 0,
     descriptionColumnIndex: 2,
     amountColumnIndex: 5,
