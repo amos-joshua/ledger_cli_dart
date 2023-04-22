@@ -26,12 +26,18 @@ final testPendingEntries = [
           description: 'THE PIZZA SHOP'
       ),
       importAccount: importAccount
-  )..destinationAccount = 'Expenses:food'
+  )..destinationAccount = 'Expenses:food',
+  PendingImportedEntry(
+      csvLine: CsvLine(
+          amount: -20,
+          date: DateTime(2003, 05, 09),
+          description: 'TRAIN REFUND'
+      ),
+      importAccount: importAccount
+  )
 ];
 
 void main() {
-  final queryExecutor = QueryExecutor();
-
   group('pending imported entry serializer', () {
     test('serialize list', () {
       final pendingImportSerializer = PendingImportSerializer();
@@ -42,7 +48,11 @@ void main() {
 
 2003/05/09 * THE PIZZA SHOP
     Assets:Test account                                 -15.8 EUR
-    Expenses:food                                        15.8 EUR""");
+    Expenses:food                                        15.8 EUR
+
+2003/05/09 * TRAIN REFUND
+    Assets:Test account                                  20.0 EUR
+    Expenses:misc                                       -20.0 EUR""");
     });
 
   });
