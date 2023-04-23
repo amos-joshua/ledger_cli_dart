@@ -13,7 +13,7 @@ const importAccount = ImportAccount(
 final testPendingEntries = [
   PendingImportedEntry(
       csvLine: CsvLine(
-        amount: 10.0,
+        amount: -10.0,
         date: DateTime(2001, 02, 03),
         description: 'SOCKS INC'
       ),
@@ -21,7 +21,7 @@ final testPendingEntries = [
   )..destinationAccount = 'Expenses:clothes',
   PendingImportedEntry(
       csvLine: CsvLine(
-          amount: 15.8,
+          amount: -15.8,
           date: DateTime(2003, 05, 09),
           description: 'THE PIZZA SHOP'
       ),
@@ -29,7 +29,7 @@ final testPendingEntries = [
   )..destinationAccount = 'Expenses:food',
   PendingImportedEntry(
       csvLine: CsvLine(
-          amount: -20,
+          amount: 20,
           date: DateTime(2003, 05, 09),
           description: 'TRAIN REFUND'
       ),

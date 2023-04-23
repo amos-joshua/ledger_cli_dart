@@ -12,8 +12,8 @@ class PendingImportSerializer {
     final date = dateFormatter.format(pendingEntry.csvLine.date);
     final source = pendingEntry.importAccount.sourceAccount;
     final destination = pendingEntry.destinationAccount.trim().isEmpty ? pendingEntry.importAccount.defaultDestinationAccount : pendingEntry.destinationAccount;
-    final sourceAmount = "${-1*pendingEntry.csvLine.amount} ${pendingEntry.importAccount.currency}";
-    final destinationAmount = "${pendingEntry.csvLine.amount} ${pendingEntry.importAccount.currency}";
+    final sourceAmount = "${pendingEntry.csvLine.amount} ${pendingEntry.importAccount.currency}";
+    final destinationAmount = "${-1*pendingEntry.csvLine.amount} ${pendingEntry.importAccount.currency}";
 
     return """$date * ${pendingEntry.csvLine.description}
     $source ${sourceAmount.padLeft(padLength - source.length, ' ')}

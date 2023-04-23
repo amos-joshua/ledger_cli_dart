@@ -2,7 +2,7 @@
 class CsvLine {
   final DateTime date;
   final String description;
-  final double amount;
+  final double amount; // NOTE: in most (all?) csv bank imports, a negative amount => money SPENT from source account on the given expense
 
   const CsvLine({required this.date, required this.description, required this.amount});
 
