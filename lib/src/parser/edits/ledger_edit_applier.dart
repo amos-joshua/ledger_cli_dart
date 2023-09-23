@@ -1,7 +1,7 @@
 import '../../core/core.dart';
 import 'edits.dart';
 
-typedef LedgerEditApplyFailureHandler = void Function(LedgerEdit, Object, StackTrace);
+typedef LedgerEditApplyFailureHandler = void Function(LedgerEdit?, Object, StackTrace);
 
 // Interface for LedgerEdit handling classes
 abstract class LedgerEditApplier {
