@@ -13,8 +13,10 @@ class LedgerStringToLineTransformer implements StreamTransformer<String, LedgerL
   final bool cancelOnError;
   late final Stream<String> _incomingStream;
   var lineNumber = 0;
+  final void Function(Object, StackTrace) onTransformError;
 
-  LedgerStringToLineTransformer({bool sync = false, this.cancelOnError = true}) {
+
+  LedgerStringToLineTransformer({bool sync = false, this.cancelOnError = true, required this.onTransformError}) {
     _controller = StreamController<LedgerLine>(onListen: _onListen, onCancel: _onCancel, onPause: () {
       _subscription?.pause();
     }, onResume: () {
@@ -23,7 +25,7 @@ class LedgerStringToLineTransformer implements StreamTransformer<String, LedgerL
     ledgerLineParser = ledgerLineDefinition.build();
   }
 
-  LedgerStringToLineTransformer.broadcast({bool sync = false, this.cancelOnError = true}) {
+  LedgerStringToLineTransformer.broadcast({bool sync = false, this.cancelOnError = true, required this.onTransformError}) {
     _controller = StreamController<LedgerLine>.broadcast(onListen: _onListen, onCancel: _onCancel, sync: sync);
   }
 
@@ -40,16 +42,22 @@ class LedgerStringToLineTransformer implements StreamTransformer<String, LedgerL
   }
 
   void onData(String data) {
-    lineNumber += 1;
-    final ledgerLineParser2 = ledgerLineDefinition.build();
+    try {
+      lineNumber += 1;
+      final ledgerLineParser2 = ledgerLineDefinition.build();
 
-    final ledgerLine = ledgerLineParser2.parse(data);
-    if (ledgerLine.isSuccess) {
-      if (ledgerLine.value is EmptyLine) return;
-      _controller.add(ledgerLine.value);
+      final ledgerLine = ledgerLineParser2.parse(data);
+      if (ledgerLine.isSuccess) {
+        if (ledgerLine.value is EmptyLine) return;
+        _controller.add(ledgerLine.value);
+      }
+      else {
+        throw Exception("Error parsing line #$lineNumber [$data]: ${ledgerLine
+            .message} (at position:${ledgerLine.position})");
+      }
     }
-    else {
-      throw Exception("Error parsing line #$lineNumber [$data]: ${ledgerLine.message} (at position:${ledgerLine.position})");
+    catch (exc, stackTrace) {
+      onTransformError(exc, stackTrace);
     }
   }
 

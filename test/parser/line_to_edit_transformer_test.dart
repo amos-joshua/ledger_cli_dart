@@ -21,7 +21,7 @@ void main() {
   group('line to edit transformer', () {
     test('transform strings in stream', () async {
       final stringStream = Stream<String>.fromIterable(testData1.split("\n"));
-      final ledgerLineStream = stringStream.transform(LedgerStringToLineTransformer());
+      final ledgerLineStream = stringStream.transform(LedgerStringToLineTransformer(onTransformError: (obj, stackTrace) => print(obj)));
       final ledgerEditsStream = ledgerLineStream.transform(LedgerLineToEditsTransformer());
       final ledgerEdits = await ledgerEditsStream.toList();
       expect(ledgerEdits, [
@@ -37,7 +37,7 @@ void main() {
 
     test('handle posting with no amount', () async {
       final stringStream = Stream<String>.fromIterable(testDataAdjustingBlankLine.split("\n"));
-      final ledgerLineStream = stringStream.transform(LedgerStringToLineTransformer());
+      final ledgerLineStream = stringStream.transform(LedgerStringToLineTransformer(onTransformError: (obj, stackTrace) => print(obj)));
       final ledgerEditsStream = ledgerLineStream.transform(LedgerLineToEditsTransformer());
       final ledgerEdits = await ledgerEditsStream.toList();
       expect(ledgerEdits, [
