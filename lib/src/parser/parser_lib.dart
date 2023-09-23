@@ -13,3 +13,4 @@ export 'csv/csv_line.dart';
 export 'csv/format.dart';
 export 'csv_data_loader.dart';
 export 'preferences_parser.dart';
+export 'preferences_loader.dart';

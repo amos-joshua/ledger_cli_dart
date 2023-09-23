@@ -77,7 +77,7 @@ void main() {
   group('string line transformer', () {
     test('transform strings in stream', () async {
       final stringStream = Stream<String>.fromIterable([r'    Expenses:books     $ 500', '  ; this is a note']);
-      final ledgerLineStream = stringStream.transform(LedgerStringToLineTransformer());
+      final ledgerLineStream = stringStream.transform(LedgerStringToLineTransformer(onTransformError: (obj, stackTrace) => print(obj)));
       final ledgerLines = await ledgerLineStream.toList();
       expect(ledgerLines, [
         PostingLine(account:'Expenses:books', currency:r'$', amount:500.0, note:''),
@@ -87,7 +87,7 @@ void main() {
 
     test('transform strings in stream', () async {
       final stringStream = Stream<String>.fromIterable(testData1.split("\n"));
-      final ledgerLineStream = stringStream.transform(LedgerStringToLineTransformer());
+      final ledgerLineStream = stringStream.transform(LedgerStringToLineTransformer(onTransformError: (obj, stackTrace) => print(obj)));
       final ledgerLines = await ledgerLineStream.toList();
       expect(ledgerLines, [
           AccountLine('Assets:Checking'),
