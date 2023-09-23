@@ -19,4 +19,21 @@ class Query {
     );
   }
 
+  bool accountsEqualTo(List<String> otherAccounts) {
+    if (otherAccounts.length != accounts.length) return false;
+    for (int i = 0; i < accounts.length; i += 1) {
+      if (otherAccounts[i] != accounts[i]) return false;
+    }
+    return true;
+  }
+
+  @override
+  String toString() => "Query($searchTerm, $startDate, $endDate, $groupBy, ${accounts.length} accounts)";
+
+  @override
+  bool operator ==(Object other) => (other is Query) && (searchTerm == other.searchTerm) && (startDate == other.startDate) && (endDate == other.endDate) && (groupBy == other.groupBy) && accountsEqualTo(other.accounts);
+
+  @override
+  int get hashCode => Object.hashAll([searchTerm, startDate, endDate, groupBy, ...accounts]);
+
 }
