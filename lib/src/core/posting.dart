@@ -1,5 +1,5 @@
 
-import 'package:ledger_cli/src/core/denominated_amount.dart';
+import 'denominated_amount.dart';
 
 // A posting in a ledger
 class Posting {
