@@ -8,7 +8,7 @@ class Account {
   bool matches(String description) => matchers.any((matcher) => description.contains(matcher));
 
   @override
-  String toString() => 'Account($name)';
+  String toString() => 'Account($name, matchers: $matchers)';
 
   @override
   bool operator ==(Object other) => (other is Account) && (name == other.name);

@@ -47,6 +47,14 @@ void main() {
     test('simple account line', () {
       expect(parser.parse('account Assets:checking').value, AccountLine('Assets:checking'));
     });
+
+    test('account line with matcher', () {
+      expect(parser.parse('account Expenses:food # "burgers"').value, AccountLine('Expenses:food', matchers: ['burgers']));
+    });
+
+    test('account line with several matchers', () {
+      expect(parser.parse('account Expenses:food # "burgers", "soda"').value, AccountLine('Expenses:food', matchers: ['burgers', 'soda']));
+    });
   });
 
   group('include lines', () {

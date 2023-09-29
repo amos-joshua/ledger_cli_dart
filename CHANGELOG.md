@@ -3,6 +3,7 @@
 
 - Remove InvertedPosting class
 - introduce Period and grouped balance queries
+- introduce LedgerSource class
 
 ## 0.1.1
 

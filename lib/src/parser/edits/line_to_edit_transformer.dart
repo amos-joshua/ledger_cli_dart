@@ -7,22 +7,25 @@ import 'ledger_line_processor.dart';
 //
 // Under the hood, uses LedgerLineProcessor
 class LedgerLineToEditsTransformer implements StreamTransformer<LedgerLine, LedgerEdit> {
+  final LedgerLineStreamProvider streamForIncludedFileCallback;
   late final StreamController<LedgerEdit> _controller;
   StreamSubscription? _subscription;
   final bool cancelOnError;
   late final Stream<LedgerLine> _incomingStream;
   late final LedgerLineProcessor ledgerLineProcessor;
+  final void Function(Object, StackTrace) onTransformError;
 
-  LedgerLineToEditsTransformer({bool sync = false, this.cancelOnError = true, List<String> knownAccounts = const []}) {
+
+  LedgerLineToEditsTransformer({bool sync = false, this.cancelOnError = true, List<String> knownAccounts = const [], required this.streamForIncludedFileCallback, required this.onTransformError}) {
     _controller = StreamController<LedgerEdit>(onListen: _onListen, onCancel: _onCancel, onPause: () {
       _subscription?.pause();
     }, onResume: () {
       _subscription?.resume();
     }, sync: sync);
-    ledgerLineProcessor = LedgerLineProcessor(knownAccounts: knownAccounts);
+    ledgerLineProcessor = LedgerLineProcessor(knownAccounts: knownAccounts, streamForIncludedFileCallback: streamForIncludedFileCallback);
   }
 
-  LedgerLineToEditsTransformer.broadcast({bool sync = false, this.cancelOnError = true}) {
+  LedgerLineToEditsTransformer.broadcast({bool sync = false, this.cancelOnError = true, required this.streamForIncludedFileCallback, required this.onTransformError}) {
     _controller = StreamController<LedgerEdit>.broadcast(onListen: _onListen, onCancel: _onCancel, sync: sync);
   }
 
@@ -45,10 +48,11 @@ class LedgerLineToEditsTransformer implements StreamTransformer<LedgerLine, Ledg
   }
 
   void onData(LedgerLine data) {
-    ledgerLineProcessor.processLine(data).toList().then((lines) {
+    ledgerLineProcessor.processLineWithIncludes(data).toList().then((lines) {
       lines.forEach(_controller.add);
-    }).catchError((err, stackTrace) {
-      print("ERROR adding edits to stream: $err\n$stackTrace");
+    }).catchError((exc, stackTrace) {
+      onTransformError(exc, stackTrace);
+      return null;
     });
   }
 

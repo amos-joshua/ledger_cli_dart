@@ -2,7 +2,7 @@ import 'package:petitparser/petitparser.dart';
 import '../../core/core.dart';
 import 'ledger_line.dart';
 
-// Users PetitParser to parse strings into LedgerLines
+// Uses PetitParser to parse strings into LedgerLines
 class LedgerLineDefinition extends GrammarDefinition {
   @override
   // NOTE: emptyLine should be last
@@ -23,7 +23,9 @@ class LedgerLineDefinition extends GrammarDefinition {
 
   Parser noteLine() => note().map((val) => NoteLine(val));
 
-  Parser accountLine() => ('account '.toParser() & char('\n').neg().star().flatten().trim()).pick(1).map((val) => AccountLine(val));
+  Parser<String> accountMatcher() => (char(' ').star() & char('"') & char('"').neg().star().flatten().trim() & char('"') & char(',').optional()).pick(2).map((val) => '$val');
+  Parser<List<String>> accountMatchers() => ref0(accountMatcher).star();
+  Parser accountLine() => seq3('account '.toParser(), (char('#') | char('\n')).neg().star().flatten(), (char('#') & ref0(accountMatchers)).pick(1).optional()).map3((prefix, account, matchers) => AccountLine(account.trim(), matchers:matchers ?? []));
 
   Parser currency() => ((char(' ') | pattern('0-9') | char(';') | char('#') | char('-') | char('+')).neg() & (char(' ') | char(';') | char('#')).neg().star()).flatten().trim();
   Parser amount() => (char('-').optional() & char('0').or(digit().plus()) & char('.').seq(digit().plus()).optional()).flatten().map(double.parse);
