@@ -1,4 +1,8 @@
 
+## 0.2.1
+
+- add support for parsing included files
+
 ## 0.2.0
 
 - Remove InvertedPosting class
