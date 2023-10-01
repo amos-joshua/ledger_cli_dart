@@ -91,10 +91,9 @@ class Period {
   @override
   String toString() => 'Period.${length.name}(${ledgerDateFormatter.format(dateRange.startDateInclusive)}, ${ledgerDateFormatter.format(dateRange.endDateInclusive)})';
 
-  @override
   String prettyPrint() {
     final startDate = ledgerDateFormatter.format(dateRange.startDateInclusive);
-    final endDate = ledgerDateFormatter.format(dateRange.endDateInclusive);
+    //final endDate = ledgerDateFormatter.format(dateRange.endDateInclusive);
     switch (length) {
       case PeriodLength.day: return startDate;
       case PeriodLength.week: return "week starting $startDate";

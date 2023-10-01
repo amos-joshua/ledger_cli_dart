@@ -12,7 +12,9 @@ import '../ledger_lines/ledger_line.dart';
 // see also LedgerLineToEditsTransformer
 class LedgerLineProcessor {
   final knownAccounts = <String>[];
-  LedgerLineProcessor({List<String> knownAccounts = const []}) {
+  final LedgerLineStreamProvider streamForIncludedFileCallback;
+
+  LedgerLineProcessor({List<String> knownAccounts = const [], required this.streamForIncludedFileCallback}) {
     this.knownAccounts.addAll(knownAccounts);
   }
 
@@ -20,17 +22,6 @@ class LedgerLineProcessor {
   final List<PostingLine> _currentPostingLines = [];
   PostingLine? _currentPostingLine;
   var lineNumber = 0;
-
-  Stream<LedgerEdit> process({required Stream<LedgerLine> lineStream}) async* {
-    initialize();
-    await for (final line in lineStream) {
-      yield* processLine(line);
-    }
-    final lastEdit = finalize();
-    if (lastEdit != null) {
-      yield lastEdit;
-    }
-  }
 
   void initialize() {
     _currentEntry = null;
@@ -50,13 +41,32 @@ class LedgerLineProcessor {
     }
     return null;
   }
-  
+
+  Stream<LedgerEdit> processLineWithIncludes(LedgerLine line) async* {
+    try {
+      if (line is IncludeLine) {
+        // When an include line is encountered, request the associated stream
+        // and yield each line
+        final includedStream = streamForIncludedFileCallback(line.path);
+        await for (final line2 in includedStream) {
+          yield* processLineWithIncludes(line2);
+        }
+      }
+      else {
+        // If it's not an include line, just process the line
+        yield* processLine(line);
+      }
+    }
+    catch (exc, stackTrace) {
+      yield* Stream.error(exc, stackTrace);
+    }
+  }
+
   Stream<LedgerEdit> processLine(LedgerLine line) async* {
     lineNumber += 1;
     final currentEntry = _currentEntry;
-    if (line is IncludeLine) {
-      print("ignoring include line for [${line.path}]");
-      return;
+    if (line is InvalidLine) {
+      yield LedgerEditInvalidLine(invalidLine: line.data, reason: line.reason, stackTrace: line.stackTrace);
     }
     if (currentEntry == null) {
       if (line is NoteLine) {
@@ -70,8 +80,9 @@ class LedgerLineProcessor {
       else if (line is AccountLine) {
         if (!knownAccounts.contains(line.name)) {
           knownAccounts.add(line.name);
-          yield LedgerEditAddAccount(line.name);
         }
+        // process even if the account is known, so that the matchers get picked up
+        yield LedgerEditAddAccount(line.name, matchers: line.matchers);
       }
     }
     else {
@@ -89,7 +100,7 @@ class LedgerLineProcessor {
         else if (line is PostingLine) {
           if (!knownAccounts.contains(line.account)) {
             knownAccounts.add(line.account);
-            yield LedgerEditAddAccount(line.account);
+            yield LedgerEditAddAccount(line.account, matchers: []);
           }
           _currentPostingLine = line;
         }
@@ -101,7 +112,7 @@ class LedgerLineProcessor {
         else if (line is PostingLine) {
           if (!knownAccounts.contains(line.account)) {
             knownAccounts.add(line.account);
-            yield LedgerEditAddAccount(line.account);
+            yield LedgerEditAddAccount(line.account, matchers: []);
           }
           _currentPostingLines.add(currentPostingLine);
           _currentPostingLine = line;
@@ -114,8 +125,9 @@ class LedgerLineProcessor {
         else if (line is AccountLine) {
           if (!knownAccounts.contains(line.name)) {
             knownAccounts.add(line.name);
-            yield LedgerEditAddAccount(line.name);
           }
+          // Process even if the account is known, so that the matchers get picked up
+          yield LedgerEditAddAccount(line.name, matchers: line.matchers);
           yield editEntryForCurrentEntry(currentEntry);
         }
       }

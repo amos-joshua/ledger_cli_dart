@@ -5,6 +5,7 @@ import '../core/import_account.dart';
 import 'csv/format.dart';
 
 class LedgerPreferencesParser {
+  const LedgerPreferencesParser();
 
   LedgerPreferences parse(String jsonData) {
     final jsonObject = jsonDecode(jsonData);

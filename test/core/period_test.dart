@@ -1,6 +1,5 @@
 
 import 'package:ledger_cli/ledger_cli.dart';
-import 'package:ledger_cli/src/core/date_range.dart';
 import 'package:test/test.dart';
 
 class PeriodMatcher extends Matcher {

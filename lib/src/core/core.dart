@@ -10,6 +10,7 @@ export 'formatters.dart';
 export 'import_account.dart';
 export 'ledger.dart';
 export 'ledger_preferences.dart';
+export 'ledger_source.dart';
 
 export "posting.dart";
 export 'period.dart';

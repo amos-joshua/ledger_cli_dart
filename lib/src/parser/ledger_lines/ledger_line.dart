@@ -1,7 +1,26 @@
 import '../../core/core.dart';
 
+typedef LedgerLineStreamProvider = Stream<LedgerLine> Function(String path);
+
 // Abstract parent for all LedgerLines, i.e. a parsed line in a ledger file
 abstract class LedgerLine {
+}
+
+// Represents a line that could not be processed
+class InvalidLine extends LedgerLine {
+  final String data;
+  final String reason;
+  final StackTrace? stackTrace;
+  InvalidLine(this.data, this.reason, this.stackTrace);
+
+  @override
+  String toString() => "InvalidLine(data: $data, reason: $reason)";
+
+  @override
+  bool operator ==(Object other) => (other is InvalidLine) && (data == other.data) && (reason == other.reason);
+
+  @override
+  int get hashCode => Object.hashAll([data, reason]);
 }
 
 // Represents an "include ..." line in a ledger file
@@ -67,13 +86,22 @@ class NoteLine extends LedgerLine {
 // Represents an account line in a ledger file, i.e. "account ...."
 class AccountLine extends LedgerLine {
   final String name;
-  AccountLine(this.name);
+  final List<String> matchers;
+  AccountLine(this.name, {this.matchers = const []});
 
   @override
-  String toString() => "AccountLine(name: $name)";
+  String toString() => "AccountLine(name: $name, matchers: $matchers)";
+
+  bool matchersEquals(List<String> otherMatchers) {
+    if (otherMatchers.length != matchers.length) return false;
+    for (int i = 0; i < matchers.length; i += 1) {
+      if (matchers[i] != otherMatchers[i]) return false;
+    }
+    return true;
+  }
 
   @override
-  bool operator ==(Object other) => (other is AccountLine) && (name == other.name);
+  bool operator ==(Object other) => (other is AccountLine) && (name == other.name) && matchersEquals(other.matchers);
 
   @override
   int get hashCode => name.hashCode;
