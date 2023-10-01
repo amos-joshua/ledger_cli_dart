@@ -17,19 +17,23 @@ const testDataAdjustingBlankLine = """
     Expenses:Music       \$ 20
 """;
 
-void onTransformError(exc, stackTrace) => print("Transform error: $exc\n$stackTrace");
+const testDataWithError = """
+account Assets:Checking
+this line is invalid!
+account Assets:Savings
+""";
+
+const toLineConverter = LedgerStringToLineConverter();
+final toEditConverter = LedgerLineToEditsConverter(streamForIncludedFileCallback: (path) => Stream.empty());
 
 void main() {
-  group('line to edit transformer', () {
-    test('transform strings in stream', () async {
+  group('line to edit converter', () {
+    test('convert strings in stream', () async {
+
       final stringStream = Stream<String>.fromIterable(testData1.split("\n"));
-      final ledgerLineStream = stringStream.transform(LedgerStringToLineTransformer(onTransformError: (obj, stackTrace) => print(obj)));
-      final ledgerEditsStream = ledgerLineStream.transform(
-          LedgerLineToEditsTransformer(
-            streamForIncludedFileCallback: (path) => Future.value(Stream.empty()),
-            onTransformError: onTransformError
-          ),
-      );
+      final ledgerLineStream = toLineConverter.convert(stringStream);
+      final ledgerEditsStream = toEditConverter.convert(ledgerLineStream);
+
       final ledgerEdits = await ledgerEditsStream.toList();
       expect(ledgerEdits, [
         LedgerEditAddAccount('Assets:Checking'),
@@ -44,8 +48,8 @@ void main() {
 
     test('handle posting with no amount', () async {
       final stringStream = Stream<String>.fromIterable(testDataAdjustingBlankLine.split("\n"));
-      final ledgerLineStream = stringStream.transform(LedgerStringToLineTransformer(onTransformError: (obj, stackTrace) => print(obj)));
-      final ledgerEditsStream = ledgerLineStream.transform(LedgerLineToEditsTransformer(streamForIncludedFileCallback: (path) => Future.value(Stream.empty()), onTransformError: onTransformError));
+      final ledgerLineStream = toLineConverter.convert(stringStream);
+      final ledgerEditsStream = toEditConverter.convert(ledgerLineStream);
       final ledgerEdits = await ledgerEditsStream.toList();
       expect(ledgerEdits, [
         LedgerEditAddAccount('Assets:Checking'),
@@ -57,6 +61,17 @@ void main() {
           Posting(account: 'Expenses:Music', currency: r'$', amount: 20.0, note: '')
         ]))
       ]);
+    });
+
+    test('handle data with error', () async {
+      final stringStream = Stream<String>.fromIterable(testDataWithError.split("\n"));
+      final ledgerLineStream = toLineConverter.convert(stringStream);
+      final ledgerEditsStream = toEditConverter.convert(ledgerLineStream);
+      final ledgerEdits = await ledgerEditsStream.toList();
+      expect(ledgerEdits.length, 3);
+      expect(ledgerEdits[0], LedgerEditAddAccount('Assets:Checking'));
+      expect(ledgerEdits[1] is LedgerEditInvalidLine, true);
+      expect(ledgerEdits[2], LedgerEditAddAccount('Assets:Savings'));
     });
   });
 }

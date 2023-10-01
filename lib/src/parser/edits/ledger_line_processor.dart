@@ -47,7 +47,7 @@ class LedgerLineProcessor {
       if (line is IncludeLine) {
         // When an include line is encountered, request the associated stream
         // and yield each line
-        final includedStream = await streamForIncludedFileCallback(line.path);
+        final includedStream = streamForIncludedFileCallback(line.path);
         await for (final line2 in includedStream) {
           yield* processLineWithIncludes(line2);
         }
@@ -65,6 +65,9 @@ class LedgerLineProcessor {
   Stream<LedgerEdit> processLine(LedgerLine line) async* {
     lineNumber += 1;
     final currentEntry = _currentEntry;
+    if (line is InvalidLine) {
+      yield LedgerEditInvalidLine(invalidLine: line.data, reason: line.reason, stackTrace: line.stackTrace);
+    }
     if (currentEntry == null) {
       if (line is NoteLine) {
         return;
@@ -77,8 +80,9 @@ class LedgerLineProcessor {
       else if (line is AccountLine) {
         if (!knownAccounts.contains(line.name)) {
           knownAccounts.add(line.name);
-          yield LedgerEditAddAccount(line.name);
         }
+        // process even if the account is known, so that the matchers get picked up
+        yield LedgerEditAddAccount(line.name, matchers: line.matchers);
       }
     }
     else {
@@ -96,7 +100,7 @@ class LedgerLineProcessor {
         else if (line is PostingLine) {
           if (!knownAccounts.contains(line.account)) {
             knownAccounts.add(line.account);
-            yield LedgerEditAddAccount(line.account);
+            yield LedgerEditAddAccount(line.account, matchers: []);
           }
           _currentPostingLine = line;
         }
@@ -108,7 +112,7 @@ class LedgerLineProcessor {
         else if (line is PostingLine) {
           if (!knownAccounts.contains(line.account)) {
             knownAccounts.add(line.account);
-            yield LedgerEditAddAccount(line.account);
+            yield LedgerEditAddAccount(line.account, matchers: []);
           }
           _currentPostingLines.add(currentPostingLine);
           _currentPostingLine = line;
@@ -121,8 +125,9 @@ class LedgerLineProcessor {
         else if (line is AccountLine) {
           if (!knownAccounts.contains(line.name)) {
             knownAccounts.add(line.name);
-            yield LedgerEditAddAccount(line.name);
           }
+          // Process even if the account is known, so that the matchers get picked up
+          yield LedgerEditAddAccount(line.name, matchers: line.matchers);
           yield editEntryForCurrentEntry(currentEntry);
         }
       }

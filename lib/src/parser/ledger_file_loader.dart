@@ -4,17 +4,18 @@ import 'dart:io';
 import '../core/core.dart';
 import 'edits/ledger_edit_receiver.dart';
 import 'edits/ledger_edit_applier.dart';
-import 'ledger_lines/string_to_line_transformer.dart';
-import 'edits/line_to_edit_transformer.dart';
+import 'ledger_lines/string_to_line_converter.dart';
+import 'edits/line_to_edit_converter.dart';
 import 'ledger_lines/ledger_line.dart';
 
 // Reads a ledger source and loads a Ledger instance from it
 //
 // This is accomplished by stringing together a line splitter, a
-// LedgerStringToLineTransformer and a LedgerLineToEditsTransformer and feeding
+// LedgerStringToLineConverter and a LedgerLineToEditsConverter and feeding
 // them into a LedgerEditReceiver
 class LedgerLoader {
   const LedgerLoader();
+  static const toLineConverter = LedgerStringToLineConverter();
 
   Future<Ledger> load(LedgerSource source, {required LedgerEditApplyFailureHandler onApplyFailure, LedgerLineStreamProvider? loadStreamForIncludedFile}) {
     return switch(source.sourceType) {
@@ -34,25 +35,23 @@ class LedgerLoader {
     return _loadFromStream(editStream, onApplyFailure: onApplyFailure, streamForIncludedFileCallback: (path) => _ledgerLineStreamFromFile(path, workingDirectory: ledgerFile.parent, onApplyFailure: onApplyFailure));
   }
 
-  Future<Stream<LedgerLine>> _emptyLedgerLineStream(String path) {
+  Stream<LedgerLine> _emptyLedgerLineStream(String path) {
     print("Ignoring included file at path [$path]");
-    return Future.value(Stream.empty());
+    return Stream.empty();
   }
 
-  Future<Stream<LedgerLine>> _ledgerLineStreamFromFile(String path, {Directory? workingDirectory, required LedgerEditApplyFailureHandler onApplyFailure}) {
+  Stream<LedgerLine> _ledgerLineStreamFromFile(String path, {Directory? workingDirectory, required LedgerEditApplyFailureHandler onApplyFailure}) {
     final fileFromPathAsPassed = File(path);
     var sourceFile = fileFromPathAsPassed;
     if (!fileFromPathAsPassed.isAbsolute && workingDirectory != null) {
-      sourceFile = File("${workingDirectory.path}/$path}");
+      sourceFile = File("${workingDirectory.path}/$path");
     }
 
-    final toLineTransformer = LedgerStringToLineTransformer(onTransformError: (exc, stackTrace) {
-      onApplyFailure(null, exc, stackTrace);
-    });
-
-    return Future.value(sourceFile.openRead()
+    final stringStream = sourceFile.openRead()
         .transform(Utf8Decoder())
-        .transform(toLineTransformer));
+        .transform(LineSplitter());
+
+    return toLineConverter.convert(stringStream);
   }
 
   Future<Ledger> _loadFromStream(Stream<String> stringStream, {required LedgerEditApplyFailureHandler onApplyFailure, required LedgerLineStreamProvider streamForIncludedFileCallback}) async {
@@ -60,21 +59,9 @@ class LedgerLoader {
     final knownAccounts =  ledger.accountManager.accounts.values.toList(growable: false).map((account) => account.name).toList();
     final editReceiver = LedgerEditReceiver.forLedger(ledger, onApplyFailure: onApplyFailure);
 
-    final toLineTransformer = LedgerStringToLineTransformer(onTransformError: (exc, stackTrace) {
-      onApplyFailure(null, exc, stackTrace);
-    });
-
-    final toEditTransformer = LedgerLineToEditsTransformer(
-      knownAccounts: knownAccounts,
-      streamForIncludedFileCallback: streamForIncludedFileCallback,
-      onTransformError: (exc, stackTrace) {
-        onApplyFailure(null, exc, stackTrace);
-      });
-
-    final editStream = stringStream
-        .transform(LineSplitter())
-        .transform(toLineTransformer)
-        .transform(toEditTransformer);
+    final toEditConverter = LedgerLineToEditsConverter(streamForIncludedFileCallback: streamForIncludedFileCallback);
+    final lineStream = toLineConverter.convert(stringStream.transform(LineSplitter()));
+    final editStream = toEditConverter.convert(lineStream, knownAccounts: knownAccounts);
     await editReceiver.receive(editStream);
 
     return ledger;

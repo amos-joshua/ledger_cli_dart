@@ -1,3 +1,4 @@
+import 'dart:async';
 import '../../core/core.dart';
 import 'edits.dart';
 import 'ledger_edit_applier.dart';
@@ -9,13 +10,24 @@ class LedgerEditReceiver {
   static LedgerEditReceiver forLedger(Ledger ledger, {required LedgerEditApplyFailureHandler onApplyFailure}) => LedgerEditReceiver(editApplier: LedgerEditApplierDefault(ledger: ledger, onApplyFailure: onApplyFailure));
 
   Future<void> receive(Stream<LedgerEdit> incomingEdits) async {
-    await for (final edit in incomingEdits) {
-      try {
-        editApplier.apply(edit);
-      }
-      catch (exc, stackTrace) {
-        editApplier.onApplyFailure(edit, exc, stackTrace);
-      }
+    final transformer = StreamTransformer<LedgerEdit, LedgerEdit>.fromHandlers(
+      handleData: (edit, sink) {
+        try {
+          editApplier.apply(edit);
+        }
+        catch (exc, stackTrace) {
+          editApplier.onApplyFailure(edit, exc, stackTrace);
+        }
+      },
+      handleError: (exc, stackTrace, sink) {
+        editApplier.onApplyFailure(null, exc, stackTrace);
+      },
+      handleDone: (sink) {
+        sink.close();
+      });
+    await for (final edit in incomingEdits.transform(transformer)) {
+      // pass
     }
+
   }
 }

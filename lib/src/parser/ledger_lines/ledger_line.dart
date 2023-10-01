@@ -1,9 +1,26 @@
 import '../../core/core.dart';
 
-typedef LedgerLineStreamProvider = Future<Stream<LedgerLine>> Function(String path);
+typedef LedgerLineStreamProvider = Stream<LedgerLine> Function(String path);
 
 // Abstract parent for all LedgerLines, i.e. a parsed line in a ledger file
 abstract class LedgerLine {
+}
+
+// Represents a line that could not be processed
+class InvalidLine extends LedgerLine {
+  final String data;
+  final String reason;
+  final StackTrace? stackTrace;
+  InvalidLine(this.data, this.reason, this.stackTrace);
+
+  @override
+  String toString() => "InvalidLine(data: $data, reason: $reason)";
+
+  @override
+  bool operator ==(Object other) => (other is InvalidLine) && (data == other.data) && (reason == other.reason);
+
+  @override
+  int get hashCode => Object.hashAll([data, reason]);
 }
 
 // Represents an "include ..." line in a ledger file

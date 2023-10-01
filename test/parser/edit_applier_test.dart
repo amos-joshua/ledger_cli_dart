@@ -5,8 +5,8 @@ import 'package:test/test.dart';
 void main() {
   group('edit applier default', () {
     test('apply basic edits', () async {
-      final addAccount1 = LedgerEditAddAccount('Assets:Checking');
-      final addAccount2 = LedgerEditAddAccount('Assets:Credit card');
+      final addAccount1 = LedgerEditAddAccount('Assets:Checking', matchers: []);
+      final addAccount2 = LedgerEditAddAccount('Assets:Credit card', matchers: []);
       final addEntry1 = LedgerEditAddEntry(Entry(date: DateTime(2023,01,02), code: '', payee: 'ABC', state: EntryState.cleared, note: '', postings: [
         Posting(account: 'Assets:Checking', currency: r'$', amount: 50.0, note: ''),
         Posting(account: 'Expenses:Music', currency: r'$', amount: -50.0, note: '')
