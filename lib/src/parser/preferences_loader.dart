@@ -12,7 +12,11 @@ class LedgerPreferencesLoader {
     final cwd = Directory.current.absolute;
     if (!await preferencesFile.exists()) throw Exception('Ledger preferences file "$path" does not exist (cwd: [$cwd])');
     final preferencesData = await preferencesFile.readAsString();
-    final loadedPreferences = parser.parse(preferencesData);
+    return loadFromStringData(preferencesData);
+  }
+
+  Future<LedgerPreferences> loadFromStringData(String data) async {
+    final loadedPreferences = parser.parse(data);
     return loadedPreferences;
   }
 }
