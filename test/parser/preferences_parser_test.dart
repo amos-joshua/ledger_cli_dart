@@ -21,6 +21,20 @@ const testData1 = """
       "format": "wise",
       "defaultDestinationAccount": "Expenses:work"
     }
+  ],
+  "csvFormats": [
+    {
+      "name": "Test format",
+      "dateColumnIndex": 0,
+      "descriptionColumnIndex": 3,
+      "amountColumnIndex": 4,
+      "dateFormat": "dd/mm/y",
+      "numberFormat": "###,##",
+      "locale": "fr_FR",
+      "lineSkip": 1,
+      "valueSeparator": ";",
+      "quoteCharacter": ""
+    }
   ]
 }
 """;
@@ -46,6 +60,19 @@ void main() {
           currency: 'USD',
           csvFormat: csvFormatWise,
           defaultDestinationAccount: 'Expenses:work')
+      );
+      expect(preferences.csvFormats.length, 1);
+      expect(preferences.csvFormats[0], CsvFormat(
+          name: 'Test format',
+          dateColumnIndex: 0,
+          descriptionColumnIndex: 3,
+          amountColumnIndex: 4,
+          dateFormat: "dd/mm/y",
+          numberFormat: '###,##',
+          locale: 'fr_FR',
+          lineSkip: 1,
+          valueSeparator: ';',
+          quoteCharacter: null)
       );
     });
   });

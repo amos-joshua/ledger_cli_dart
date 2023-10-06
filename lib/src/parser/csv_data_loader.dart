@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:csv/csv.dart';
 import 'csv/list_to_csv_line_transformer.dart';
 import 'csv/csv_line.dart';
-import 'csv/format.dart';
+import '../core/csv_format.dart';
 
 class CsvDataLoader {
   const  CsvDataLoader();

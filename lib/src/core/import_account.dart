@@ -1,5 +1,5 @@
 
-import '../parser/csv/format.dart';
+import 'csv_format.dart';
 
 class ImportAccount {
   final String label;

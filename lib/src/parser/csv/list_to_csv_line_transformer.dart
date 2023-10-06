@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'csv_line.dart';
-import 'format.dart';
+import '../../core/csv_format.dart';
 
 
 class ListToCsvLineTransformer implements StreamTransformer<List<dynamic>, CsvLine> {
