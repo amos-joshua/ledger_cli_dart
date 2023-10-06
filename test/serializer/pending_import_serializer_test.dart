@@ -1,12 +1,13 @@
 
 import 'package:ledger_cli/ledger_cli.dart';
 import 'package:test/test.dart';
+import '../core/test_formats.dart';
 
 const importAccount = ImportAccount(
     label: 'Test account',
     sourceAccount: 'Assets:Test account',
     currency: 'EUR',
-    csvFormat: csvFormatWise,
+    csvFormat: csvFormatBank2,
     defaultDestinationAccount: 'Expenses:misc'
 );
 

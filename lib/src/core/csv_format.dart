@@ -1,13 +1,5 @@
 
 class CsvFormat {
-  static final all = [
-    csvFormatBankOfAmerica,
-    csvFormatBnp,
-    csvFormatChase,
-    csvFormatUsBank,
-    csvFormatWise
-  ];
-
   final String name;
   final int dateColumnIndex;
   final int descriptionColumnIndex;

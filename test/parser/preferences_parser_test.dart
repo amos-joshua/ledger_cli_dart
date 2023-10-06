@@ -1,6 +1,7 @@
 
 import 'package:ledger_cli/ledger_cli.dart';
 import 'package:test/test.dart';
+import '../core/test_formats.dart';
 
 const testData1 = """
 {
@@ -39,6 +40,7 @@ const testData1 = """
 }
 """;
 
+
 void main() {
   group('PreferencesParser', () {
     test('basic parsing', () {
@@ -51,14 +53,14 @@ void main() {
           label: 'BNP account 1',
           sourceAccount: 'Assets:checking',
           currency: 'EUR',
-          csvFormat: csvFormatBnp,
+          csvFormat: csvFormatBank1,
           defaultDestinationAccount: 'Expenses:misc')
       );
       expect(preferences.importAccounts[1], ImportAccount(
           label: 'Wise account 2',
           sourceAccount: 'Assets:wise-cc',
           currency: 'USD',
-          csvFormat: csvFormatWise,
+          csvFormat: csvFormatBank2,
           defaultDestinationAccount: 'Expenses:work')
       );
       expect(preferences.csvFormats.length, 1);

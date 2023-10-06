@@ -27,8 +27,8 @@ class LedgerPreferencesParser {
     if (importAccountsObjects is! List<dynamic>) throw Exception('Error parsing preferences, expected a list attribute "importAccounts" but found [$importAccountsObjects] which is a [${importAccountsObjects.runtimeType}]');
     if (csvFormatsObjects is! List<dynamic>) throw Exception('Error parsing preferences, expected a list attribute "csvFormats" but found [$csvFormatsObjects] which is a [${csvFormatsObjects.runtimeType}]');
 
-    final importAccounts = _parseImportAccounts(importAccountsObjects);
     final csvFormats = _parseCsvFormats(csvFormatsObjects);
+    final importAccounts = _parseImportAccounts(importAccountsObjects, csvFormats);
 
     return LedgerPreferences(
         defaultLedgerFile: defaultLedgerFile,
@@ -87,18 +87,18 @@ class LedgerPreferencesParser {
     );
   }
 
-  List<ImportAccount> _parseImportAccounts(List<dynamic> jsonObjects) {
+  List<ImportAccount> _parseImportAccounts(List<dynamic> jsonObjects, List<CsvFormat> csvFormats) {
     final importAccounts = <ImportAccount>[];
     for (final jsonObject in jsonObjects) {
       if (jsonObject is! Map<String, dynamic>) throw Exception("Cannot parse import accounts, object [$jsonObject] is not a Map<String, dynamic> but rather a [${jsonObject.runtimeType}]");
-      final importAccount = _parseImportAccount(jsonObject);
+      final importAccount = _parseImportAccount(jsonObject, csvFormats);
       importAccounts.add(importAccount);
     }
 
     return importAccounts;
   }
 
-  ImportAccount _parseImportAccount(Map<String, dynamic> jsonObject) {
+  ImportAccount _parseImportAccount(Map<String, dynamic> jsonObject, List<CsvFormat> csvFormats) {
     final label = jsonObject['label'];
     final sourceAccount = jsonObject['sourceAccount'];
     final currency = jsonObject['currency'];
@@ -115,7 +115,7 @@ class LedgerPreferencesParser {
     if (currency.trim().isEmpty) throw Exception('Error parsing import accounts, jsonObject [$jsonObject] has an empty currency attribute');
 
     if (csvFormatLabel is! String) throw Exception('Error parsing import accounts, expected a String "format" attribute in [$jsonObject] but found [$csvFormatLabel]');
-    final csvFormat = CsvFormat.all.firstWhere((csvFormat) => csvFormat.name == csvFormatLabel, orElse: () {
+    final csvFormat = csvFormats.firstWhere((csvFormat) => csvFormat.name == csvFormatLabel, orElse: () {
       throw Exception("Error parsing import accounts, format [$csvFormatLabel] is unknown");
     });
 
