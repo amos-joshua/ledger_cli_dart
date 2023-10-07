@@ -21,7 +21,7 @@ class PeriodMatcher extends Matcher {
     if (item is! Period) return mismatchDescription.add("$item is not a Period instance");
     if (item.dateRange.startDateInclusive != startDateInclusive) mismatchDescription.add("Start date ${ledgerDateFormatter.format(item.dateRange.startDateInclusive)} is different than expected ${ledgerDateFormatter.format(startDateInclusive)}");
     if (item.dateRange.endDateInclusive != endDateInclusive) mismatchDescription.add("end date ${ledgerDateFormatter.format(item.dateRange.endDateInclusive)} is different than expected ${ledgerDateFormatter.format(endDateInclusive)}");
-    if (item.length != periodLength) mismatchDescription.add("period length ${item.length} is different than expected period length ${periodLength}");
+    if (item.length != periodLength) mismatchDescription.add("period length ${item.length} is different than expected period length $periodLength");
     return mismatchDescription;
   }
 
@@ -77,7 +77,7 @@ void main() {
   final mar10_2021 = DateTime(2021, 03, 10);
   final mar11_2021 = DateTime(2021, 03, 11);
 
-  final dec31_2021 = DateTime(2021, 12, 31);
+  //final dec31_2021 = DateTime(2021, 12, 31);
 
 
   group('period for', () {

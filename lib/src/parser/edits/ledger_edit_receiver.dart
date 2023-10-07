@@ -25,7 +25,7 @@ class LedgerEditReceiver {
       handleDone: (sink) {
         sink.close();
       });
-    await for (final edit in incomingEdits.transform(transformer)) {
+    await for (final _ in incomingEdits.transform(transformer)) {
       // pass
     }
 

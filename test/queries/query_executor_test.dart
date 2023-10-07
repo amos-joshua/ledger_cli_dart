@@ -89,7 +89,7 @@ void main() {
     test('query assets with yearly period', () {
       final jan1_1999 = DateTime(1999, 01, 01);
       final jan1_2000 = DateTime(2000, 01, 01);
-      final jan4_2000 = DateTime(2000, 01, 04);
+      //final jan4_2000 = DateTime(2000, 01, 04);
       final year_1999 = Period.yearFor(jan1_1999, jan1_1999);
       final year_2000 = Period.yearFor(jan1_1999, jan1_2000);
 
