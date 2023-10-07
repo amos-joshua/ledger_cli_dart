@@ -1,4 +1,9 @@
 
+## 0.2.2
+
+- allow defining formats in preferences file
+- allow loading preferences from strings
+
 ## 0.2.1
 
 - add support for parsing included files
