@@ -1,4 +1,8 @@
 
+## 0.2.3
+
+- support for CRLF and LF endings in csv imports
+
 ## 0.2.2
 
 - allow defining formats in preferences file
