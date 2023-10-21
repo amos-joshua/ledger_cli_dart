@@ -1,6 +1,6 @@
 name: ledger_cli
 description: Parse ledger-cli ledger files
-version: 0.2.2
+version: 0.2.3
 homepage: https://github.com/amos-joshua/ledger_cli_dart
 
 environment:

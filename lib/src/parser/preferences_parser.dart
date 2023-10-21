@@ -19,10 +19,7 @@ class LedgerPreferencesParser {
     final csvFormatsObjects = jsonObject['csvFormats'];
 
     if (defaultLedgerFile is! String) throw Exception('Error parsing preferences, expected a string attribute "defaultLedgerFile" but found [$defaultLedgerFile] which is a [${defaultLedgerFile.runtimeType}]');
-    if (defaultLedgerFile.trim().isEmpty) throw Exception('Error parsing preferences, "defaultLedgerFile" is empty');
-
     if (defaultCsvImportDirectory is! String) throw Exception('Error parsing preferences, expected a string attribute "defaultCsvImportDirectory" but found [$defaultCsvImportDirectory] which is a [${defaultCsvImportDirectory.runtimeType}]');
-    if (defaultCsvImportDirectory.trim().isEmpty) throw Exception('Error parsing preferences, "defaultCsvImportDirectory" is empty');
 
     if (importAccountsObjects is! List<dynamic>) throw Exception('Error parsing preferences, expected a list attribute "importAccounts" but found [$importAccountsObjects] which is a [${importAccountsObjects.runtimeType}]');
     if (csvFormatsObjects is! List<dynamic>) throw Exception('Error parsing preferences, expected a list attribute "csvFormats" but found [$csvFormatsObjects] which is a [${csvFormatsObjects.runtimeType}]');

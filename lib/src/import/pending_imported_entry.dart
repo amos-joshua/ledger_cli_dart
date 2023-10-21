@@ -1,5 +1,5 @@
 import '../parser/csv/csv_line.dart';
-import '../core/import_account.dart';
+import '../core/core.dart';
 
 class PendingImportedEntry {
   final CsvLine csvLine;
@@ -26,4 +26,25 @@ class PendingImportedEntry {
 
   @override
   int get hashCode => Object.hash(csvLine, importAccount, destinationAccount);
+
+  Entry asEntry() {
+    return Entry(
+      code: '',
+      date: csvLine.date,
+      payee: csvLine.description,
+      state: EntryState.cleared,
+      postings: [
+        Posting(
+            account: destinationAccount,
+            currency: importAccount.currency,
+            amount: csvLine.amount
+        ),
+        Posting(
+            account: importAccount.sourceAccount,
+            currency: importAccount.currency,
+            amount: -csvLine.amount
+        ),
+      ],
+    );
+  }
 }

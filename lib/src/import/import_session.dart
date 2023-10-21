@@ -1,8 +1,7 @@
 import 'dart:io';
 import 'pending_imported_entry.dart';
 import '../parser/csv/csv_line.dart';
-import '../core/account.dart';
-import '../core/import_account.dart';
+import '../core/core.dart';
 import '../serializer/pending_import_serializer.dart';
 
 class ImportSession {
@@ -23,7 +22,6 @@ class ImportSession {
       );
       pendingEntries.add(importedEntry);
     }
-
     pendingEntries.sort((line1, line2) => line1.csvLine.date.compareTo(line2.csvLine.date));
   }
 
@@ -50,5 +48,9 @@ class ImportSession {
     final decoratedData = '\n$header\n\n$serializedImports\n\n$footer\n';
     final ledger = File(ledgerFile);
     return ledger.writeAsString(decoratedData, mode: FileMode.writeOnlyAppend).then((file){});
+  }
+
+  Iterable<Entry> pendingEntriesAsEntries() {
+    return pendingEntries.where((entry) => !entry.markedForDeletion).map((pendingEntry) => pendingEntry.asEntry());
   }
 }
